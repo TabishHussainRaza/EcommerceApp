@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ecommerece_velocity_app/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../components/custom_surfix_icon.dart';
@@ -57,7 +58,6 @@ class _SignFormState extends State<SignForm> {
           SizedBox(height: getProportionateScreenHeight(30)),
           Row(
             children: [
-              const Spacer(),
               GestureDetector(
                 onTap: () => Navigator.pushNamed(
                     context, ForgotPasswordScreen.routeName),
@@ -181,8 +181,10 @@ class _SignFormState extends State<SignForm> {
         sharedPreferences.setString("token", "true");
         var cookies = response.headers['set-cookie'];
         sharedPreferences.setString("cookies", cookies!);
+        sharedPreferences.setString("user", response.body);
 
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeScreen()), (Route<dynamic> route) => false);
+        sharedPreferences.setString("user_id", customerFromJson(response.body).data.id.toString());
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => ProfileScreen()), (Route<dynamic> route) => false);
         //
       }
     }

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:ecommerece_velocity_app/helper/keyboard.dart';
-import 'package:ecommerece_velocity_app/models/address.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../components/default_button.dart';
@@ -10,16 +9,14 @@ import '../../../../constants.dart';
 import '../../../../size_config.dart';
 import '../../main_address.dart';
 
-class UpdateAddressForm extends StatefulWidget {
-  Address AddressID;
-  UpdateAddressForm({Key? key, required this.AddressID}) : super(key: key);
+class AddAddressForm extends StatefulWidget {
+  const AddAddressForm({Key? key}) : super(key: key);
 
   @override
   _AddAddressForm createState() => _AddAddressForm();
 }
 
-class _AddAddressForm extends State<UpdateAddressForm> {
-  late AddressData currentAddress;
+class _AddAddressForm extends State<AddAddressForm> {
   late SharedPreferences sharedPreferences;
   final _formKey = GlobalKey<FormState>();
   final List<String?> errors = [];
@@ -53,98 +50,52 @@ class _AddAddressForm extends State<UpdateAddressForm> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getAddressDetails(),
-      builder: (BuildContext context, AsyncSnapshot snapshot){
-        if(snapshot.data == null){
-          return Center(
-            //child:
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CircularProgressIndicator(
-                  valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
-                  value: snapshot.data,
-                  semanticsLabel: 'Progress indicator',
-                ),
-                SizedBox(height: getProportionateScreenHeight(20)),
-                const Text(
-                  'Please wait while it is loading.. ',
-                ),
-              ],
-            ),
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          buildFirstNameFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildLastNameFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildCompanyFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildPhoneNumberFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildAddressFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildCountryField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildCityFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildStateFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
+          buildPostalFormField(),
+          FormError(errors: errors),
+          SizedBox(height: getProportionateScreenHeight(40)),
+          DefaultButton(
+            text: "continue",
+            press: () {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                _isLoading =true;
+                // if all are valid then go to success screen
+                const snackBar = SnackBar(content: Text('Processing...'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-          );
-        }else{
-          return Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                buildFirstNameFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildLastNameFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildCompanyFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildPhoneNumberFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildAddressFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildCountryField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildCityFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildStateFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildPostalFormField(),
-                FormError(errors: errors),
-                SizedBox(height: getProportionateScreenHeight(40)),
-                DefaultButton(
-                  text: "Update Address",
-                  press: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      _isLoading =true;
-                      // if all are valid then go to success screen
-                      const snackBar = SnackBar(content: Text('Processing...'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-                      UpdateAddress();
-                      KeyboardUtil.hideKeyboard(context);
-                    }
-                  },
-                ),
-                SizedBox(height: getProportionateScreenHeight(35)),
-                DefaultButton(
-                  text: "Delete Address",
-                  press: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      _isLoading =true;
-                      // if all are valid then go to success screen
-                      const snackBar = SnackBar(content: Text('Processing...'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-                      DeleteAddress();
-                      KeyboardUtil.hideKeyboard(context);
-                    }
-                  },),
-              ],
-            ),
-          );
-        }
-      },
+                AddAdress();
+                KeyboardUtil.hideKeyboard(context);
+              }
+            },
+          ),
+        ],
+      ),
     );
-
-
   }
 
   TextFormField buildAddressFormField() {
     return TextFormField(
-        initialValue:currentAddress.data.address1[0],
       onSaved: (newValue) => addressStreet1 = newValue,
-      //autocorrect: false,
-      //controller: _Controller,
       onChanged: (value) {
         if (value.isNotEmpty) {
           removeError(error: kAddressNullError);
@@ -171,9 +122,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildCountryField() {
-
     return TextFormField(
-      initialValue:  currentAddress.data.country,
       onSaved: (newValue) => country = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -201,9 +150,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildCityFormField() {
-
     return TextFormField(
-      initialValue: currentAddress.data.city,
       onSaved: (newValue) => city = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -231,9 +178,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildStateFormField() {
-
     return TextFormField(
-      initialValue:currentAddress.data.state,
       onSaved: (newValue) => state = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -261,9 +206,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildPostalFormField() {
-
     return TextFormField(
-      initialValue: currentAddress.data.postcode,
       onSaved: (newValue) => zipcode = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -291,9 +234,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildPhoneNumberFormField() {
-
     return TextFormField(
-      initialValue: currentAddress.data.phone,
       keyboardType: TextInputType.phone,
       onSaved: (newValue) => phoneNumber = newValue,
       onChanged: (value) {
@@ -321,9 +262,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildCompanyFormField() {
-
     return TextFormField(
-        initialValue:  currentAddress.data.companyName,
       onSaved: (newValue) => company = newValue,
       decoration:const InputDecoration(
         labelText: "Company Name",
@@ -337,9 +276,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildLastNameFormField() {
-
     return TextFormField(
-      initialValue:   currentAddress.data.lastName,
       onSaved: (newValue) => lastName = newValue,
       decoration:const InputDecoration(
         labelText: "Last Name",
@@ -353,9 +290,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildFirstNameFormField() {
-
     return TextFormField(
-        initialValue:   currentAddress.data.firstName,
       onSaved: (newValue) => firstName = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -381,34 +316,8 @@ class _AddAddressForm extends State<UpdateAddressForm> {
     );
   }
 
-  Future<AddressData> getAddressDetails() async {
-    var id = widget.AddressID.id;
-    sharedPreferences = await SharedPreferences.getInstance();
-    final name = sharedPreferences.getString('cookies') ?? '';
-
-    String url = serverUrl + "addresses/$id";
-    var response = await http.get(Uri.parse(url),
-        headers: {
-          'Cookie':name,
-          'Connection': 'keep-alive',
-        }
-    );
-    if(response.statusCode == 200) {
-      var jsonResponse = await json.decode(response.body);
-
-      if(jsonResponse != null) {
-        currentAddress =addressDataFromJson(response.body);
-        return currentAddress;
-      }
-    }
-    else {
-    }
-    throw ("Not found");
-  }
-
-  UpdateAddress() async {
-    var id = widget.AddressID.id;
-    String url = serverUrl+"addresses/$id";
+  AddAdress() async {
+    String url = serverUrl+"addresses/create";
     Map data = {
       "first_name": firstName,
       "last_name": lastName,
@@ -427,7 +336,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
     };
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
-    var response = await http.put(Uri.parse(url),
+    var response = await http.post(Uri.parse(url),
         headers: {
       'Cookie':name,
     }, body: data);
@@ -441,38 +350,9 @@ class _AddAddressForm extends State<UpdateAddressForm> {
         setState(() {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         });
-        const snackBar = SnackBar(content: Text('Address Updated Successfully'));
+        const snackBar = SnackBar(content: Text('Address Created Successfully'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const AddressScreen()), (Route<dynamic> route) => false);
-      }
-    }
-    else {
-      const snackBar = SnackBar(content: Text('Oops! Ran into some problem. Try again'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-  }
-
-  DeleteAddress() async {
-    var id = widget.AddressID.id;
-    String url = serverUrl+"addresses/$id";
-    sharedPreferences = await SharedPreferences.getInstance();
-    final name = sharedPreferences.getString('cookies') ?? '';
-    var response = await http.delete(Uri.parse(url),
-        headers: {
-          'Cookie':name,
-        });
-
-    setState(() {
-      _isLoading = false;
-    });
-    if(response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      if(jsonResponse != null) {
-        setState(() {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        });
-        const snackBar = SnackBar(content: Text('Address Deleted'));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        //Navigator.of(context).pushNamed('/address');
         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const AddressScreen()), (Route<dynamic> route) => true);
       }
     }

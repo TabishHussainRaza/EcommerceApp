@@ -20,6 +20,12 @@ final headingStyle = TextStyle(
   height: 1.5,
 );
 
+final subheadingStyle = TextStyle(
+  fontSize: getProportionateScreenWidth(28),
+  color: Colors.black,
+  height: 0.5,
+);
+
 const defaultDuration = Duration(milliseconds: 250);
 
 // Form Error

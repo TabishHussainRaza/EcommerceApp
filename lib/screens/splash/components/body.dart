@@ -1,3 +1,4 @@
+import 'package:ecommerece_velocity_app/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerece_velocity_app/constants.dart';
 import 'package:ecommerece_velocity_app/screens/sign_in/sign_in_screen.dart';
@@ -70,7 +71,9 @@ class _BodyState extends State<Body> {
                     DefaultButton(
                       text: "Lets Get Started",
                       press: () {
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => true);
+                        //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => true);
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeScreen()), (Route<dynamic> route) => false);
+
                       },
                     ),
                     Spacer(),

@@ -18,4 +18,17 @@ class ProfileScreen extends StatelessWidget {
       bottomNavigationBar: const CustomBottomNavBar(selectedMenu: MenuState.profile),
     );
   }
+
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Column(
+        children: const [
+          Text(
+            "My Profile",
+            style: TextStyle(color: Colors.black),
+          ),
+        ],
+      ),
+    );
+  }
 }

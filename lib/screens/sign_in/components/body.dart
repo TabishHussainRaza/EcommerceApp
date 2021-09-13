@@ -25,13 +25,13 @@ class Body extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  "Sign in with your email and password  \nor continue with social media",
+                const Text(
+                  "Sign in with your email and password ",
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.08),
                 SignForm(),
-                SizedBox(height: SizeConfig.screenHeight * 0.08),
+                SizedBox(height: SizeConfig.screenHeight * 0.1),
                 NoAccountText(),
               ],
             ),

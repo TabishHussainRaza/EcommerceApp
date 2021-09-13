@@ -1,11 +1,13 @@
-import 'package:ecommerece_velocity_app/screens/adresss/profile_screen.dart';
+import 'package:ecommerece_velocity_app/models/Customer.dart';
+import 'package:ecommerece_velocity_app/screens/adresss/main_address.dart';
+import 'package:ecommerece_velocity_app/screens/home/home_screen.dart';
+import 'package:ecommerece_velocity_app/screens/orders/main_orders.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
 import '../../complete_profile/complete_profile_screen.dart';
 import '../../sign_in/sign_in_screen.dart';
-import '../../splash/splash_screen.dart';
 import 'package:http/http.dart' as http;
 
 import 'profile_menu.dart';
@@ -22,45 +24,51 @@ class _ProfileBody extends State<ProfileBody> {
   var errorMsg;
 
   late SharedPreferences sharedPreferences;
+  late Customer CurrentCustomer;
 
   @override
   void initState() {
     super.initState();
-    loginStatus();
   }
 
   loginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
     if(sharedPreferences.getString("token") == null) {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => false);
-    }
+      Navigator.of(context).pushNamed('/home');
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => true);
+    }else{
+    final name = sharedPreferences.getString('user') ?? '';
+    print(name);
+    CurrentCustomer = customerFromJson(name);}
   }
 
   @override
   Widget build(BuildContext context) {
+    loginStatus();
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
           SizedBox(height: SizeConfig.screenHeight * 0.01),
           Text("My Profile", style: headingStyle),
-          SizedBox(height: SizeConfig.screenHeight * 0.1),
+          SizedBox(height: SizeConfig.screenHeight * 0.05),
           ProfileMenu(
             text: "My Account",
             icon: "assets/icons/User Icon.svg",
             press: () => {
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const CompleteProfileScreen()), (Route<dynamic> route) => true)
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => CompleteProfileScreen(CurrentCustomer: CurrentCustomer)), (Route<dynamic> route) => true)
             },
           ),
           ProfileMenu(
             text: "My Orders",
-            icon: "assets/icons/Bell.svg",
+            icon: "assets/icons/order.svg",
             press: () {
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const OrdersScreen()), (Route<dynamic> route) => true);
               },
           ),
           ProfileMenu(
             text: "My Address Book",
-            icon: "assets/icons/Settings.svg",
+            icon: "assets/icons/book.svg",
             press: () {
               Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const AddressScreen()), (Route<dynamic> route) => true);
             },
@@ -72,7 +80,7 @@ class _ProfileBody extends State<ProfileBody> {
               //logout();
               sharedPreferences.clear();
               sharedPreferences.commit();
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SplashScreen()), (Route<dynamic> route) => false);
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeScreen()), (Route<dynamic> route) => false);
 
             },
           ),
@@ -92,7 +100,7 @@ class _ProfileBody extends State<ProfileBody> {
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         sharedPreferences.clear();
         sharedPreferences.commit();
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SplashScreen()), (Route<dynamic> route) => false);
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeScreen()), (Route<dynamic> route) => false);
 
     }
     else {

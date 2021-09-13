@@ -1,20 +1,21 @@
 import 'package:ecommerece_velocity_app/components/coustom_bottom_nav_bar.dart';
-import 'package:ecommerece_velocity_app/models/Customer.dart';
+import '../../../models/address.dart';
 import 'package:flutter/material.dart';
 
-import '../../enums.dart';
+import '../../../enums.dart';
 import 'components/body.dart';
 
-class CompleteProfileScreen extends StatelessWidget {
-  Customer CurrentCustomer;
-  static String routeName = "/complete_profile";
+class UpdateAddressScreen extends StatelessWidget {
+  Address AddressID;
+  static String routeName = "/updateAddressScreen";
 
-  CompleteProfileScreen({Key? key, required this.CurrentCustomer}) : super(key: key);
+  UpdateAddressScreen({Key? key, required this.AddressID}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: buildAppBar(context),
-      body: Body(CurrentCustomer: CurrentCustomer,),
+      body: Body(AddressID: AddressID),
       bottomNavigationBar: const CustomBottomNavBar(selectedMenu: MenuState.profile),
     );
   }
@@ -23,7 +24,7 @@ class CompleteProfileScreen extends StatelessWidget {
       title: Column(
         children: const [
           Text(
-            "My Profile",
+            "View Address",
             style: TextStyle(color: Colors.black),
           ),
         ],

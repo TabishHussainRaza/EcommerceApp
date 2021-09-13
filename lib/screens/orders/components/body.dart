@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:ecommerece_velocity_app/models/address.dart';
+import 'package:ecommerece_velocity_app/models/orders.dart';
 import 'package:ecommerece_velocity_app/screens/adresss/create_address/add_adress.dart';
 import 'package:ecommerece_velocity_app/screens/adresss/update_address/update_address.dart';
+import 'package:ecommerece_velocity_app/screens/orders/view_order/view_order.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constants.dart';
@@ -10,18 +12,18 @@ import '../../sign_in/sign_in_screen.dart';
 import 'package:http/http.dart' as http;
 
 
-class AddressBody extends StatefulWidget {
-  const AddressBody({Key? key}) : super(key: key);
+class OrderBody extends StatefulWidget {
+  const OrderBody({Key? key}) : super(key: key);
 
   @override
   _ProfileBody createState() => _ProfileBody();
 }
-class _ProfileBody extends State<AddressBody> {
+class _ProfileBody extends State<OrderBody> {
   late SharedPreferences sharedPreferences;
-  late List<Address> allAddressList;
+  late List<Order> allOrdersList;
   @override
   void initState() {
-    addressList();
+    ordersList();
     super.initState();
     loginStatus();
   }
@@ -38,11 +40,11 @@ class _ProfileBody extends State<AddressBody> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder(
-        future: addressList(),
+        future: ordersList(),
         builder: (BuildContext context, AsyncSnapshot snapshot){
           if(snapshot.data == null){
             return Center(
-                //child:
+              //child:
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -73,12 +75,11 @@ class _ProfileBody extends State<AddressBody> {
                     elevation: 0.0,
                     //backgroundColor: const Color(0xFFF5F6F9),
                     child: ListTile(
-                      title: Text(snapshot.data[index].address1[0]),
-                      subtitle: Text(snapshot.data[index].city),
+                      title: Text("Order ID: "+ snapshot.data[index].id.toString(), style: TextStyle(fontSize: getProportionateScreenWidth(20),fontWeight: FontWeight.w900)),
+                      subtitle: Text("\nLast Updated: "+ snapshot.data[index].updatedAt.toString()+ " \n" +snapshot.data[index].status.toUpperCase()),
                       onTap: (){
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => UpdateAddressScreen(AddressID: snapshot.data[index],)), (Route<dynamic> route) => true);
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => ViewOrderScreen(MyOrder: snapshot.data[index],)), (Route<dynamic> route) => true);
                       },
-                      trailing: const Icon(Icons.arrow_forward_ios),
                     )
                 );
               },
@@ -88,11 +89,14 @@ class _ProfileBody extends State<AddressBody> {
       ),
     );
   }
-  Future<List<Address>> addressList() async {
-    List<Address> allAddressList;
-    String url = serverUrl + "addresses";
+  Future<List<Order>> ordersList() async {
+    List<Order> allOrdersList;
+
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
+    final id = sharedPreferences.getString('user_id') ?? '';
+
+    String url = serverUrl + "orders?customer_id=$id";
     var response = await http.get(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
@@ -104,8 +108,8 @@ class _ProfileBody extends State<AddressBody> {
       var jsonResponse = await json.decode(response.body);
 
       if(jsonResponse != null) {
-        allAddressList = addressListFromJson(response.body).data;
-        return allAddressList;
+        allOrdersList = ordersListFromJson(response.body).data;
+        return allOrdersList;
       }
     }
     else {

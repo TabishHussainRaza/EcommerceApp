@@ -16,22 +16,18 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color inActiveIconColor = Color(0xFFB6B6B6);
+    const Color inActiveIconColor = Color(0xFFB6B6B6);
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 14),
+      padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            offset: Offset(0, -15),
+            offset: const Offset(0, -15),
             blurRadius: 20,
-            color: Color(0xFFDADADA).withOpacity(0.15),
+            color: const Color(0xFFDADADA).withOpacity(0.15),
           ),
         ],
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(40),
-          topRight: Radius.circular(40),
-        ),
       ),
       child: SafeArea(
           top: false,
@@ -49,11 +45,10 @@ class CustomBottomNavBar extends StatelessWidget {
                     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomeScreen()), (Route<dynamic> route) => false),
               ),
               IconButton(
-                icon: SvgPicture.asset("assets/icons/Heart Icon.svg"),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: SvgPicture.asset("assets/icons/Chat bubble Icon.svg"),
+                icon: Icon(Icons.category,
+                  color: MenuState.Category == selectedMenu ? kPrimaryColor : inActiveIconColor,
+
+                ),
                 onPressed: () {},
               ),
               IconButton(
@@ -64,7 +59,16 @@ class CustomBottomNavBar extends StatelessWidget {
                       : inActiveIconColor,
                 ),
                 onPressed: () =>
-                    Navigator.pushNamed(context, ProfileScreen.routeName),
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const ProfileScreen()), (Route<dynamic> route) => false),
+
+              ),
+
+              IconButton(
+                icon: Icon(Icons.more_horiz,
+                  color: MenuState.More == selectedMenu ? kPrimaryColor : inActiveIconColor,
+
+                  ),
+                onPressed: () {},
               ),
             ],
           )),

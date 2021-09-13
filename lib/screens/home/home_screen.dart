@@ -7,26 +7,29 @@ import 'package:ecommerece_velocity_app/screens/sign_in/sign_in_screen.dart';
 import 'components/body.dart';
 
 class HomeScreen extends StatefulWidget {
+  static String routeName = "/home";
+
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   _HomeScreen createState() => _HomeScreen();
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  static String routeName = "/home";
   late SharedPreferences sharedPreferences;
 
   @override
   void initState() {
     super.initState();
-    loginStatus();
+    //loginStatus();
   }
-
+/*
   loginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
     if(sharedPreferences.getString("token") == null) {
       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => false);
     }
-  }
+  }*/
 
 
   @override

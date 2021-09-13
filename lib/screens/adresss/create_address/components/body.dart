@@ -1,18 +1,11 @@
-import 'package:ecommerece_velocity_app/models/address.dart';
 import 'package:flutter/material.dart';
 import '../../../../constants.dart';
 import '../../../../size_config.dart';
 
 import 'address_form.dart';
 
-class Body extends StatefulWidget {
-  Address AddressID;
-  Body({Key? key, required this.AddressID}) : super(key: key);
-
-  @override
-  BodyContent createState() => BodyContent();
-}
-class BodyContent extends State<Body> {
+class Body extends StatelessWidget {
+  const Body({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +19,14 @@ class BodyContent extends State<Body> {
             child: Column(
               children: [
                 SizedBox(height: SizeConfig.screenHeight * 0.03),
-                Text("Update Address", style: headingStyle),
+                Text("Add New Address", style: headingStyle),
                 const Text(
-                  "Change the following fields to update.",
+                  "Complete the following form",
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.06),
-                UpdateAddressForm(AddressID: widget.AddressID),
-                SizedBox(height: getProportionateScreenHeight(150)),
+                AddAddressForm(),
+                SizedBox(height: getProportionateScreenHeight(30)),
               ],
             ),
           ),
@@ -42,4 +35,3 @@ class BodyContent extends State<Body> {
     );
   }
 }
-
