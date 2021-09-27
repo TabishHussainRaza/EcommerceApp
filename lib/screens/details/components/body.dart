@@ -1,10 +1,8 @@
-import 'package:ecommerece_velocity_app/components/default_button.dart';
 import 'package:ecommerece_velocity_app/components/rounded_icon_btn.dart';
 import 'package:ecommerece_velocity_app/models/Product.dart';
 import 'package:ecommerece_velocity_app/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerece_velocity_app/models/products.dart' as Pro;
-import 'color_dots.dart';
 import 'product_description.dart';
 import 'product_images.dart';
 import 'top_rounded_container.dart';
@@ -123,8 +121,8 @@ class BodyContent extends State<Body> {
                         ],
                       ),
                     ),
-                    SizedBox(width: getProportionateScreenWidth(40)),/*
-                    TopRoundedContainer(
+                    SizedBox(width: getProportionateScreenWidth(40)),
+                    /*TopRoundedContainer(
                       color: Colors.white,
                       child: Padding(
                         padding: EdgeInsets.only(

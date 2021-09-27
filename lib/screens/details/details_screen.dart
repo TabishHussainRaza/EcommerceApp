@@ -7,6 +7,8 @@ import 'components/custom_app_bar.dart';
 class DetailsScreen extends StatelessWidget {
   static String routeName = "/details";
 
+  const DetailsScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final ProductDetailsArguments agrs =
@@ -18,7 +20,7 @@ class DetailsScreen extends StatelessWidget {
         child: CustomAppBar(),
       ),
       body: Body(product: agrs.product),
-      bottomNavigationBar: AddCard(),
+      bottomNavigationBar: const AddCard(),
     );
   }
 }

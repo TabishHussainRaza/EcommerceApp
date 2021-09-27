@@ -33,7 +33,6 @@ class BodyContent extends State<Body> {
                 ),
                 SizedBox(height: SizeConfig.screenHeight * 0.06),
                 UpdateAddressForm(AddressID: widget.AddressID),
-                SizedBox(height: getProportionateScreenHeight(150)),
               ],
             ),
           ),

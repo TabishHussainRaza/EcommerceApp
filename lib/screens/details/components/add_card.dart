@@ -1,4 +1,5 @@
 import 'package:ecommerece_velocity_app/components/default_button.dart';
+import 'package:ecommerece_velocity_app/screens/cart/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerece_velocity_app/models/Cart.dart';
 
@@ -40,7 +41,9 @@ class AddCard extends StatelessWidget {
                   width: getProportionateScreenWidth(250),
                   child: DefaultButton(
                     text: "Add to Cart",
-                    press: () {},
+                    press: () {
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => CartScreen()), (Route<dynamic> route) => true);
+                    },
                   ),
                 ),
               ],

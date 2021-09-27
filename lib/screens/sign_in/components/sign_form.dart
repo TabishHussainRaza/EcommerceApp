@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:ecommerece_velocity_app/screens/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../components/custom_surfix_icon.dart';
 import '../../../components/form_error.dart';
@@ -46,7 +47,17 @@ class _SignFormState extends State<SignForm> {
     }
   }
 
+
   @override
+  /*Widget build(BuildContext context) {
+    return LoadingOverlay(
+        child: buildLoginForm(context),
+        isLoading: _isLoading,
+        // demo of some additional parameters
+        opacity: 0.5,
+        progressIndicator: CircularProgressIndicator(),
+      );
+  }*/
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
@@ -56,18 +67,7 @@ class _SignFormState extends State<SignForm> {
           SizedBox(height: getProportionateScreenHeight(30)),
           buildPasswordFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                    context, ForgotPasswordScreen.routeName),
-                child: const Text(
-                  "Forgot Password",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
-              )
-            ],
-          ),
+
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
           DefaultButton(
@@ -75,8 +75,10 @@ class _SignFormState extends State<SignForm> {
             press: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                // if all are valid then go to success screen
-                _isLoading =true;
+                // start the modal progress HUD
+                setState(() {
+                  _isLoading = true;
+                });
                 const snackBar = SnackBar(content: Text('Processing...'));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 signIn();
@@ -118,7 +120,6 @@ class _SignFormState extends State<SignForm> {
         // If  you are using latest version of flutter then label text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Lock.svg"),
       ),
     );
   }
@@ -151,7 +152,6 @@ class _SignFormState extends State<SignForm> {
         // If  you are using latest version of flutter then label text and hint text shown like this
         // if you r using flutter less then 1.20.* then maybe this is not working properly
         floatingLabelBehavior: FloatingLabelBehavior.always,
-        suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Mail.svg"),
       ),
     );
   }

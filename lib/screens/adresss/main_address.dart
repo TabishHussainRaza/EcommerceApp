@@ -13,7 +13,7 @@ class AddressScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(context),
-        body:AddressBody(),
+        body:const AddressBody(),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const AddAddressScreen()), (Route<dynamic> route) => true);
@@ -33,7 +33,7 @@ class AddressScreen extends StatelessWidget {
       title: Column(
         children: const [
           Text(
-            "My Addresses",
+            "Address Book",
             style: TextStyle(color: Colors.black),
           ),
         ],

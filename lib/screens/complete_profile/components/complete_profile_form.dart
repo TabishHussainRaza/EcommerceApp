@@ -138,7 +138,12 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
 
   TextFormField buildGenderFormField() {
     final TextEditingController _controller = TextEditingController();
-    _controller.text = currentCustomer.data.gender;
+    if(currentCustomer.data.gender != null){
+      _controller.text = currentCustomer.data.gender!;
+    }else{
+      _controller.text = "Please Select";
+    }
+
 
     return TextFormField(
         onSaved: (value) => gender = value,

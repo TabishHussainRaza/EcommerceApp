@@ -5,6 +5,7 @@ import 'package:ecommerece_velocity_app/screens/adresss/create_address/add_adres
 import 'package:ecommerece_velocity_app/screens/adresss/update_address/update_address.dart';
 import 'package:ecommerece_velocity_app/screens/orders/view_order/view_order.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -42,7 +43,7 @@ class _ProfileBody extends State<OrderBody> {
       body: FutureBuilder(
         future: ordersList(),
         builder: (BuildContext context, AsyncSnapshot snapshot){
-          if(snapshot.data == null){
+          if(snapshot.connectionState == ConnectionState.waiting){
             return Center(
               //child:
               child: Column(
@@ -61,7 +62,12 @@ class _ProfileBody extends State<OrderBody> {
               ),
 
             );
-          } else {
+          } else if (snapshot.connectionState == ConnectionState.done){
+          if (snapshot.hasError) {
+          print("KK");
+          return Text('Error: ${snapshot.error}');
+          }
+          else if (snapshot.hasData == true) {
             return ListView.builder(
               padding: const EdgeInsets.only(top: 10),
               itemCount: snapshot.data.length,
@@ -74,22 +80,134 @@ class _ProfileBody extends State<OrderBody> {
                     RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                     elevation: 0.0,
                     //backgroundColor: const Color(0xFFF5F6F9),
-                    child: ListTile(
-                      title: Text("Order ID: "+ snapshot.data[index].id.toString(), style: TextStyle(fontSize: getProportionateScreenWidth(20),fontWeight: FontWeight.w900)),
-                      subtitle: Text("\nLast Updated: "+ snapshot.data[index].updatedAt.toString()+ " \n" +snapshot.data[index].status.toUpperCase()),
-                      onTap: (){
+                    child: /*Container(
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Stack(
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Order ID: "+ snapshot.data[index].id.toString(), style: TextStyle(fontSize: getProportionateScreenWidth(20),fontWeight: FontWeight.w900))
+
+                          ),
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("\nLast Updated: "+DateFormat('yyyy-MM-dd').format(snapshot.data[index].createdAt)
+
+                                  +
+                                  "\nOrder Placed on: " + DateFormat('yyyy-MM-dd').format(snapshot.data[index].updatedAt)
+
+                                  + " \n" +snapshot.data[index].status.toUpperCase()),
+                          )
+                        ],
+                      ),
+                    )*/
+                    InkWell(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child:  Text("Order Number: "+ snapshot.data[index].id.toString(), style: TextStyle(fontSize: getProportionateScreenWidth(20),)),
+                          ),
+                            SizedBox(height: SizeConfig.screenHeight * 0.01),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Last Updated: "+DateFormat('yyyy-MM-dd').format(snapshot.data[index].createdAt)),
+                            ),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text("Order Placed on: " + DateFormat('yyyy-MM-dd').format(snapshot.data[index].updatedAt)),
+                            ),
+                            SizedBox(height: SizeConfig.screenHeight * 0.01),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
+                                    color:snapshot.data[index].status == "completed" ? Colors.green : snapshot.data[index].status == "pending" ? Colors.yellow :Colors.red
+
+                                ),
+                                child:
+                                Text("  "+ snapshot.data[index].status.toString().toUpperCase() + "  ",
+
+                                  style: const TextStyle(
+                                    color:Colors.white,
+                                  ),),
+
+
+                              )
+                            ),
+                          ],
+                        ),
+                      ),
+                      onTap: () {
                         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => ViewOrderScreen(MyOrder: snapshot.data[index],)), (Route<dynamic> route) => true);
                       },
                     )
+
+
+
+                    /*ListTile(
+                      title: ,
+                      subtitle: Text("\nLast Updated: "+DateFormat('yyyy-MM-dd').format(snapshot.data[index].createdAt)
+
+                          +
+                          "\nOrder Placed on: " + DateFormat('yyyy-MM-dd').format(snapshot.data[index].updatedAt)
+
+                          + " \n" +snapshot.data[index].status.toUpperCase()),
+                      onTap: (){
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => ViewOrderScreen(MyOrder: snapshot.data[index],)), (Route<dynamic> route) => true);
+                      },
+                    )*/
                 );
               },
             );
+          }
+          else{
+            return Center(
+              //child:
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding:
+                    EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Oops', style: TextStyle(fontSize: getProportionateScreenWidth(35),fontWeight: FontWeight.w800),),
+                          SizedBox(height: SizeConfig.screenHeight * 0.01),
+                          Text(
+                              'Looks like you don\'t have any orders.',
+                              style: TextStyle(fontSize: getProportionateScreenWidth(15))),
+                          Text(
+                              'Buy now and track your orders',style: TextStyle(fontSize: getProportionateScreenWidth(15))),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                ],
+              ),
+
+            );
+          }
+          }
+          else {
+            return Text('State: ${snapshot.connectionState}');
           }
         },
       ),
     );
   }
-  Future<List<Order>> ordersList() async {
+  Future<dynamic> ordersList() async {
     List<Order> allOrdersList;
 
     sharedPreferences = await SharedPreferences.getInstance();
@@ -109,11 +227,14 @@ class _ProfileBody extends State<OrderBody> {
 
       if(jsonResponse != null) {
         allOrdersList = ordersListFromJson(response.body).data;
+        if(allOrdersList.isEmpty){
+          return null;
+        }
         return allOrdersList;
       }
     }
     else {
+      throw ("Not found");
     }
-    throw ("Not found");
   }
 }

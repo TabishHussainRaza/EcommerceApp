@@ -11,11 +11,21 @@ class AddAddressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
+      appBar: buildAppBar(context),
       body: const Body(),
         bottomNavigationBar: const CustomBottomNavBar(selectedMenu: MenuState.profile),
+    );
+  }
+  AppBar buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Column(
+        children: const [
+          Text(
+            "Add Address",
+            style: TextStyle(color: Colors.black),
+          ),
+        ],
+      ),
     );
   }
 }

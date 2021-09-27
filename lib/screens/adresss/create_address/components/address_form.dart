@@ -71,8 +71,9 @@ class _AddAddressForm extends State<AddAddressForm> {
           buildStateFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
           buildPostalFormField(),
+          SizedBox(height: getProportionateScreenHeight(30)),
           FormError(errors: errors),
-          SizedBox(height: getProportionateScreenHeight(40)),
+          SizedBox(height: getProportionateScreenHeight(20)),
           DefaultButton(
             text: "continue",
             press: () {

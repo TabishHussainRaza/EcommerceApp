@@ -10,7 +10,7 @@ class MyTextFieldDatePicker extends StatefulWidget {
   final String labelText;
   final Icon prefixIcon;
   final Icon suffixIcon;
-  String CustomerDOB;
+  String? CustomerDOB;
 
   MyTextFieldDatePicker({
     required Key key,
@@ -58,7 +58,12 @@ class _MyTextFieldDatePicker extends State<MyTextFieldDatePicker> {
 
     _controllerDate = TextEditingController();
 
-    _controllerDate.text = widget.CustomerDOB;
+    if(widget.CustomerDOB != null){
+      _controllerDate.text = widget.CustomerDOB!;
+    }else{
+      _controllerDate.text = DateTime.now().toString();
+    }
+
   }
 
   @override

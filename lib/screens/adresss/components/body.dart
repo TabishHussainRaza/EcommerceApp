@@ -29,7 +29,7 @@ class _ProfileBody extends State<AddressBody> {
   loginStatus() async {
     sharedPreferences = await SharedPreferences.getInstance();
     if(sharedPreferences.getString("token") == null) {
-      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const SignInPage()), (Route<dynamic> route) => false);
     }
 
   }
@@ -40,7 +40,7 @@ class _ProfileBody extends State<AddressBody> {
       body: FutureBuilder(
         future: addressList(),
         builder: (BuildContext context, AsyncSnapshot snapshot){
-          if(snapshot.data == null){
+          if(snapshot.connectionState == ConnectionState.waiting){
             return Center(
                 //child:
               child: Column(
@@ -59,36 +59,73 @@ class _ProfileBody extends State<AddressBody> {
               ),
 
             );
-          } else {
-            return ListView.builder(
-              padding: const EdgeInsets.only(top: 10),
-              itemCount: snapshot.data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                    color: const Color(0xFFF5F6F9),
-                    //primary: kPrimaryColor,
-                    margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                    shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    elevation: 0.0,
-                    //backgroundColor: const Color(0xFFF5F6F9),
-                    child: ListTile(
-                      title: Text(snapshot.data[index].address1[0]),
-                      subtitle: Text(snapshot.data[index].city),
-                      onTap: (){
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => UpdateAddressScreen(AddressID: snapshot.data[index],)), (Route<dynamic> route) => true);
-                      },
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                    )
-                );
-              },
-            );
+          }  else if (snapshot.connectionState == ConnectionState.done){
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            else if (snapshot.hasData == true){
+              return ListView.builder(
+                padding: const EdgeInsets.only(top: 10),
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                      color: const Color(0xFFF5F6F9),
+                      //primary: kPrimaryColor,
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      shape:
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      elevation: 0.0,
+                      //backgroundColor: const Color(0xFFF5F6F9),phone
+                      child: ListTile(
+                        title: Text(snapshot.data[index].firstName +" "+ snapshot.data[index].lastName),
+                        subtitle: Text(snapshot.data[index].address1[0]+"\n "+snapshot.data[index].city+"\n "+snapshot.data[index].country+"\n "+snapshot.data[index].phone),
+                        onTap: (){
+                          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => UpdateAddressScreen(AddressID: snapshot.data[index],)), (Route<dynamic> route) => true);
+                        },
+                      )
+                  );
+                },
+              );
+            }
+            else{
+              return Center(
+                //child:
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                      EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text(
+                                'Oops', style: TextStyle(fontSize: getProportionateScreenWidth(35),fontWeight: FontWeight.w800),),
+                            SizedBox(height: SizeConfig.screenHeight * 0.01),
+                            Text(
+                                'Looks like you don\'t have any address.',
+                              style: TextStyle(fontSize: getProportionateScreenWidth(15))),
+                            Text(
+                                'Click + to Add new Address!',style: TextStyle(fontSize: getProportionateScreenWidth(15))),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+
+              );
+            }
+          }
+          else {
+            return Text('State: ${snapshot.connectionState}');
           }
         },
       ),
     );
   }
-  Future<List<Address>> addressList() async {
+  Future<dynamic> addressList() async {
     List<Address> allAddressList;
     String url = serverUrl + "addresses";
     sharedPreferences = await SharedPreferences.getInstance();
@@ -102,13 +139,18 @@ class _ProfileBody extends State<AddressBody> {
     );
     if(response.statusCode == 200) {
       var jsonResponse = await json.decode(response.body);
-
       if(jsonResponse != null) {
         allAddressList = addressListFromJson(response.body).data;
+        if(allAddressList.isEmpty){
+          return null;
+        }
         return allAddressList;
+      }else{
+        return null;
       }
     }
     else {
+      throw ("Not found");
     }
     throw ("Not found");
   }

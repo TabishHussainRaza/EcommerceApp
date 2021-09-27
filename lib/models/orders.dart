@@ -1690,13 +1690,13 @@ class Meta {
   });
 
   int currentPage;
-  int from;
-  int lastPage;
+  int? from;
+  int? lastPage;
   List<Link> links;
   String path;
-  int perPage;
-  int to;
-  int total;
+  int? perPage;
+  int? to;
+  int? total;
 
   factory Meta.fromJson(Map<String, dynamic> json) => Meta(
     currentPage: json["current_page"],

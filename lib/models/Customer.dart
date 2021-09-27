@@ -54,9 +54,9 @@ class Data {
   String firstName;
   String lastName;
   String name;
-  String gender;
-  String dateOfBirth;
-  String phone;
+  String? gender;
+  String? dateOfBirth;
+  String? phone;
   int status;
   Group group;
   DateTime createdAt;

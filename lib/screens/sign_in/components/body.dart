@@ -1,6 +1,8 @@
+import 'package:ecommerece_velocity_app/screens/forgot_password/forgot_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerece_velocity_app/components/no_account_text.dart';
 import 'package:ecommerece_velocity_app/components/socal_card.dart';
+import '../../../constants.dart';
 import '../../../size_config.dart';
 import 'sign_form.dart';
 
@@ -29,9 +31,29 @@ class Body extends StatelessWidget {
                   "Sign in with your email and password ",
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: SizeConfig.screenHeight * 0.08),
+                SizedBox(height: SizeConfig.screenHeight * 0.05),
                 SignForm(),
-                SizedBox(height: SizeConfig.screenHeight * 0.1),
+                SizedBox(height: getProportionateScreenHeight(30)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Forgot your Password? ",
+                      style: TextStyle(fontSize: getProportionateScreenWidth(16)),
+                    ),
+                    GestureDetector(
+                      onTap: () => Navigator.pushNamed(
+                          context, ForgotPasswordScreen.routeName),
+                      child: Text(
+                        "Reset Now",
+                        style: TextStyle(
+                          fontSize: getProportionateScreenWidth(16),
+                          color: kPrimaryColor,)
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: getProportionateScreenHeight(20)),
                 NoAccountText(),
               ],
             ),
