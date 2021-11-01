@@ -12,7 +12,8 @@ import '../../../../size_config.dart';
 import '../../main_address.dart';
 
 class UpdateAddressForm extends StatefulWidget {
-  Address AddressID;
+  final Address AddressID;
+
   UpdateAddressForm({Key? key, required this.AddressID}) : super(key: key);
 
   @override
@@ -57,8 +58,8 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: getAddressDetails(),
-      builder: (BuildContext context, AsyncSnapshot snapshot){
-        if(snapshot.data == null){
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.data == null) {
           return Center(
             //child:
             child: Column(
@@ -66,7 +67,8 @@ class _AddAddressForm extends State<UpdateAddressForm> {
               children: <Widget>[
                 SizedBox(height: getProportionateScreenHeight(150)),
                 CircularProgressIndicator(
-                  valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                  valueColor:
+                      const AlwaysStoppedAnimation<Color>(kPrimaryColor),
                   value: snapshot.data,
                   semanticsLabel: 'Progress indicator',
                 ),
@@ -76,9 +78,8 @@ class _AddAddressForm extends State<UpdateAddressForm> {
                 ),
               ],
             ),
-
           );
-        }else{
+        } else {
           return Form(
             key: _formKey,
             child: Column(
@@ -107,7 +108,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
                   press: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      _isLoading =true;
+                      _isLoading = true;
                       // if all are valid then go to success screen
                       const snackBar = SnackBar(content: Text('Processing...'));
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -123,7 +124,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
                   press: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      _isLoading =true;
+                      _isLoading = true;
                       // if all are valid then go to success screen
                       const snackBar = SnackBar(content: Text('Processing...'));
                       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -131,20 +132,19 @@ class _AddAddressForm extends State<UpdateAddressForm> {
                       DeleteAddress();
                       KeyboardUtil.hideKeyboard(context);
                     }
-                  },),
+                  },
+                ),
               ],
             ),
           );
         }
       },
     );
-
-
   }
 
   TextFormField buildAddressFormField() {
     return TextFormField(
-        initialValue:currentAddress.data.address1[0],
+      initialValue: currentAddress.data.address1[0],
       onSaved: (newValue) => addressStreet1 = newValue,
       //autocorrect: false,
       //controller: _Controller,
@@ -172,11 +172,16 @@ class _AddAddressForm extends State<UpdateAddressForm> {
       ),
     );
   }
+
   TextFormField buildCountryFormField() {
     final TextEditingController _controller = TextEditingController();
-    if(!currentAddress.data.country.isEmpty){
+    if (!currentAddress.data.country.isEmpty) {
       _controller.text = currentAddress.data.countryName;
-    }else{
+      SelectedCountry = Country(
+          id: currentAddress.data.id,
+          title: currentAddress.data.country,
+          description: currentAddress.data.countryName);
+    } else {
       _controller.text = "Please Select";
     }
     return TextFormField(
@@ -205,28 +210,26 @@ class _AddAddressForm extends State<UpdateAddressForm> {
             icon: const Icon(Icons.arrow_drop_down),
             onSelected: (Country value) {
               country = value.description;
-              SelectedCountry = Country(id:value.id, title:value.title, description:value.description);
+              SelectedCountry = Country(
+                  id: value.id,
+                  title: value.title,
+                  description: value.description);
               _controller.text = value.description;
             },
             itemBuilder: (BuildContext context) {
-              return CountryList
-                  .map<PopupMenuItem<Country>>((Country value) {
+              return CountryList.map<PopupMenuItem<Country>>((Country value) {
                 return PopupMenuItem(
                     child: Text(value.description), value: value);
               }).toList();
             },
             //suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
           ),
-        )
-
-    );
-
+        ));
   }
 
   TextFormField buildCountryField() {
-
     return TextFormField(
-      initialValue:  currentAddress.data.country,
+      initialValue: currentAddress.data.country,
       onSaved: (newValue) => country = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -254,7 +257,6 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildCityFormField() {
-
     return TextFormField(
       initialValue: currentAddress.data.city,
       onSaved: (newValue) => city = newValue,
@@ -284,9 +286,8 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildStateFormField() {
-
     return TextFormField(
-      initialValue:currentAddress.data.state,
+      initialValue: currentAddress.data.state,
       onSaved: (newValue) => state = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -314,7 +315,6 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildPostalFormField() {
-
     return TextFormField(
       initialValue: currentAddress.data.postcode,
       onSaved: (newValue) => zipcode = newValue,
@@ -344,7 +344,6 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildPhoneNumberFormField() {
-
     return TextFormField(
       initialValue: currentAddress.data.phone,
       keyboardType: TextInputType.phone,
@@ -374,11 +373,10 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildCompanyFormField() {
-
     return TextFormField(
-        initialValue:  currentAddress.data.companyName,
+      initialValue: currentAddress.data.companyName,
       onSaved: (newValue) => company = newValue,
-      decoration:const InputDecoration(
+      decoration: const InputDecoration(
         labelText: "Company Name",
         hintText: "Company Name",
         // If  you are using latest version of flutter then label text and hint text shown like this
@@ -390,11 +388,10 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildLastNameFormField() {
-
     return TextFormField(
-      initialValue:   currentAddress.data.lastName,
+      initialValue: currentAddress.data.lastName,
       onSaved: (newValue) => lastName = newValue,
-      decoration:const InputDecoration(
+      decoration: const InputDecoration(
         labelText: "Last Name",
         hintText: "Enter your last name",
         // If  you are using latest version of flutter then label text and hint text shown like this
@@ -406,9 +403,8 @@ class _AddAddressForm extends State<UpdateAddressForm> {
   }
 
   TextFormField buildFirstNameFormField() {
-
     return TextFormField(
-        initialValue:   currentAddress.data.firstName,
+      initialValue: currentAddress.data.firstName,
       onSaved: (newValue) => firstName = newValue,
       onChanged: (value) {
         if (value.isNotEmpty) {
@@ -423,7 +419,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
         }
         return null;
       },
-      decoration:const InputDecoration(
+      decoration: const InputDecoration(
         labelText: "First Name",
         hintText: "Enter your first name",
         // If  you are using latest version of flutter then label text and hint text shown like this
@@ -440,37 +436,31 @@ class _AddAddressForm extends State<UpdateAddressForm> {
     final name = sharedPreferences.getString('cookies') ?? '';
 
     String url = serverUrl + "addresses/$id";
-    var response = await http.get(Uri.parse(url),
-        headers: {
-          'Cookie':name,
-          'Connection': 'keep-alive',
-        }
-    );
-    if(response.statusCode == 200) {
+    var response = await http.get(Uri.parse(url), headers: {
+      'Cookie': name,
+      'Connection': 'keep-alive',
+    });
+    if (response.statusCode == 200) {
       var jsonResponse = await json.decode(response.body);
 
-      if(jsonResponse != null) {
-        currentAddress =addressDataFromJson(response.body);
+      if (jsonResponse != null) {
+        currentAddress = addressDataFromJson(response.body);
         return currentAddress;
       }
-    }
-    else {
-    }
+    } else {}
     throw ("Not found");
   }
 
   UpdateAddress() async {
     var id = widget.AddressID.id;
-    String url = serverUrl+"addresses/$id";
+    String url = serverUrl + "addresses/$id";
     Map data = {
       "first_name": firstName,
       "last_name": lastName,
       "company_name": company,
       "vat_id": "",
       'is_default': "false",
-      "address1[0]":
-        addressStreet1
-      ,
+      "address1[0]": addressStreet1,
       "country": SelectedCountry.title,
       "country_name": SelectedCountry.description,
       "state": state,
@@ -482,55 +472,59 @@ class _AddAddressForm extends State<UpdateAddressForm> {
     final name = sharedPreferences.getString('cookies') ?? '';
     var response = await http.put(Uri.parse(url),
         headers: {
-      'Cookie':name,
-    }, body: data);
+          'Cookie':name,
+        },
+        body: data);
 
     setState(() {
       _isLoading = false;
     });
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
-      if(jsonResponse != null) {
+      if (jsonResponse != null) {
         setState(() {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         });
-        const snackBar = SnackBar(content: Text('Address Updated Successfully'));
+        const snackBar =
+            SnackBar(content: Text('Address Updated Successfully'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const AddressScreen()), (Route<dynamic> route) => false);
+
       }
-    }
-    else {
-      const snackBar = SnackBar(content: Text('Oops! Ran into some problem. Try again'));
+    } else {
+      const snackBar =
+          SnackBar(content: Text('Oops! Ran into some problem. Try again'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
   DeleteAddress() async {
     var id = widget.AddressID.id;
-    String url = serverUrl+"addresses/$id";
+    String url = serverUrl + "addresses/$id";
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
-    var response = await http.delete(Uri.parse(url),
-        headers: {
-          'Cookie':name,
-        });
+    var response = await http.delete(Uri.parse(url), headers: {
+      'Cookie': name,
+    });
 
     setState(() {
       _isLoading = false;
     });
-    if(response.statusCode == 200) {
+    if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
-      if(jsonResponse != null) {
+      if (jsonResponse != null) {
         setState(() {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
         });
         const snackBar = SnackBar(content: Text('Address Deleted'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const AddressScreen()), (Route<dynamic> route) => true);
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (BuildContext context) => const AddressScreen()),
+            (Route<dynamic> route) => true);
       }
-    }
-    else {
-      const snackBar = SnackBar(content: Text('Oops! Ran into some problem. Try again'));
+    } else {
+      const snackBar =
+          SnackBar(content: Text('Oops! Ran into some problem. Try again'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

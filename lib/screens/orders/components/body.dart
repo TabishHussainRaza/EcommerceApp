@@ -246,7 +246,6 @@ class _OrderBody extends State<OrderBody> {
     });
     if (response.statusCode == 200) {
       var jsonResponse = await json.decode(response.body);
-      print(jsonResponse);
       if (jsonResponse != null) {
         allOrdersList = ordersListFromJson(response.body).data;
         if (allOrdersList.isEmpty) {
