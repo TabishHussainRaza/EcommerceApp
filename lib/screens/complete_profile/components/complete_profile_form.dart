@@ -68,7 +68,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: getProportionateScreenHeight(100)),
+                  SizedBox(height: getProportionateScreenHeight(150)),
                   CircularProgressIndicator(
                     valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
                     value: snapshot.data,

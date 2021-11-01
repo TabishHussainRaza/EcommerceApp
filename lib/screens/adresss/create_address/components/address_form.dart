@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:ecommerece_velocity_app/helper/keyboard.dart';
+import 'package:ecommerece_velocity_app/models/country.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../components/default_button.dart';
@@ -29,8 +30,10 @@ class _AddAddressForm extends State<AddAddressForm> {
   String? addressStreet2;
   String? city;
   String? country;
+  late Country SelectedCountry;
   String? state;
   String? zipcode;
+  var items = ['Afghanistan', 'Åland Islands', 'Albania'];
 
   void addError({String? error}) {
     if (!errors.contains(error)) {
@@ -64,7 +67,7 @@ class _AddAddressForm extends State<AddAddressForm> {
           SizedBox(height: getProportionateScreenHeight(30)),
           buildAddressFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
-          buildCountryField(),
+          buildCountryFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
           buildCityFormField(),
           SizedBox(height: getProportionateScreenHeight(30)),
@@ -317,6 +320,53 @@ class _AddAddressForm extends State<AddAddressForm> {
     );
   }
 
+  TextFormField buildCountryFormField() {
+    final TextEditingController _controller = TextEditingController();
+    return TextFormField(
+        onSaved: (value) => country = value,
+        controller: _controller,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            removeError(error: kAddressNullError);
+          }
+          return;
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            addError(error: kAddressNullError);
+            return "";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: "Country",
+          hintText: "Please Select Country",
+          // If  you are using latest version of flutter then label text and hint text shown like this
+          // if you r using flutter less then 1.20.* then maybe this is not working properly
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          suffixIcon: PopupMenuButton<Country>(
+            icon: const Icon(Icons.arrow_drop_down),
+            onSelected: (Country value) {
+              country = value.description;
+              SelectedCountry = Country(id:value.id, title:value.title, description:value.description);
+              _controller.text = value.description;
+            },
+            itemBuilder: (BuildContext context) {
+              return CountryList
+                  .map<PopupMenuItem<Country>>((Country value) {
+                return PopupMenuItem(
+                    child: Text(value.description), value: value);
+              }).toList();
+            },
+            //suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
+          ),
+        )
+
+    );
+
+  }
+
+
   AddAdress() async {
     String url = serverUrl+"addresses/create";
     Map data = {
@@ -328,13 +378,14 @@ class _AddAddressForm extends State<AddAddressForm> {
       "address1[0]":
         addressStreet1
       ,
-      "country": country,
-      "country_name": country,
+      "country": SelectedCountry.title,
+      "country_name": SelectedCountry.description,
       "state": state,
       "city": city,
       "postcode": zipcode,
       "phone": phoneNumber,
     };
+
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
     var response = await http.post(Uri.parse(url),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ecommerece_velocity_app/models/Product.dart';
+import 'package:ecommerece_velocity_app/models/products.dart';
 import 'package:ecommerece_velocity_app/screens/details/details_screen.dart';
 
 import '../constants.dart';
@@ -41,14 +41,14 @@ class ProductCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Hero(
-                    tag: product.id.toString(),
-                    child: Image.asset(product.images[0]),
+                    tag: product.name,
+                    child: Image.asset(product.images[0].smallImageUrl),
                   ),
                 ),
               ),
               const SizedBox(height: 10),
               Text(
-                product.title,
+                product.name,
                 style: TextStyle(color: Colors.black),
                 maxLines: 2,
               ),

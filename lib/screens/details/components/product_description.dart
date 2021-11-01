@@ -27,11 +27,13 @@ class ProductDescription extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding:
-          EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+          padding: EdgeInsets.only(
+            left: getProportionateScreenWidth(18),
+            top: getProportionateScreenWidth(5),
+          ),
           child: Text(
             product.name,
-            style: Theme.of(context).textTheme.headline6,
+            style: new TextStyle(fontSize: 22.0,fontWeight: FontWeight.bold),
           ),
         ),
         Column(
@@ -44,68 +46,22 @@ class ProductDescription extends StatelessWidget {
                     flex: 3,
                     child: Padding(
                       padding: EdgeInsets.only(
-                        left: getProportionateScreenWidth(20),
-                        top: getProportionateScreenWidth(10),
+                        left: getProportionateScreenWidth(18),
+                        top: getProportionateScreenWidth(5),
                       ),
                       child:
                       Row(
                         children: [
-                          if (product.inStock) const Text("In Stock", style: TextStyle(color: Colors.green,fontWeight: FontWeight.w800,) ) else const Text("Out of Stock", style: TextStyle(color: Colors.red, fontWeight: FontWeight.w800,),
+                          if (product.inStock) const Text("In Stock", style: TextStyle(fontSize: 18.0, color: Colors.green,fontWeight: FontWeight.w800,) ) else const Text("Out of Stock", style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.w800,),
                           )
                         ],
                       ),
                     ),
                   ),
-                  Expanded(
-                    flex: 3,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-                          padding: EdgeInsets.all(getProportionateScreenWidth(15)),
-                          decoration: BoxDecoration(
-                            color:
-                            product.isWishlisted ? Color(0xFFFFE6E6) : Color(0xFFF5F6F9),
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              bottomLeft: Radius.circular(20),
-                            ),
-                          ),
-                          child: Text(
-                            "\$ ${product.price}",
-                            style: TextStyle(
-                              fontSize: getProportionateScreenWidth(20),
-                              fontWeight: FontWeight.w800,
-                              color: kPrimaryColor,
-                            ),
-                          )
-                      ),
-                    ),
-                  )
                 ],
               ),
             )
           ],
-        ),
-        Padding(
-          padding: EdgeInsets.only(
-            left: getProportionateScreenWidth(20),
-            top: getProportionateScreenWidth(15),
-          ),
-          child: const Text(
-              "Product Details",style: TextStyle(
-            fontWeight: FontWeight.w800,)
-          ),
-        ),
-
-        Padding(
-          padding: EdgeInsets.only(
-            left: getProportionateScreenWidth(20),
-            right: getProportionateScreenWidth(20),
-            top: getProportionateScreenWidth(15),
-          ),
-          child: Text(
-            product.description,textAlign: TextAlign.justify
-          ),
         ),
 
       ],

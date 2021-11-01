@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerece_velocity_app/models/products.dart';
 
@@ -22,28 +23,58 @@ class _ProductImagesState extends State<ProductImages> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: getProportionateScreenWidth(20)),
-        SizedBox(
-          width: getProportionateScreenWidth(238),
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Hero(
+      Container(
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.symmetric(horizontal: 10.0),
+          decoration: BoxDecoration(
+          color: Color(0xFFF5F6F9),
+          borderRadius: BorderRadius.circular(10),),
+          child:Column(
+              children: [
+              SizedBox(height: getProportionateScreenWidth(20)),
+              SizedBox(
+              width: getProportionateScreenWidth(250),
+              child: AspectRatio(
+              aspectRatio: 1,
+              child: Hero(
               tag: widget.product.id.toString(),
-              child: //Image.network(widget.product.images[selectedImage].mediumImageUrl)
-              Image.asset("assets/images/gf_gp.png")
-              ,
-            ),
+              child: Container(
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.symmetric(horizontal: 0.5),
+              child:
+              CachedNetworkImage(
+                imageUrl: widget.product.images[selectedImage].largeImageUrl,
+                progressIndicatorBuilder: (context, url, downloadProgress) => Center(
+                    child:SizedBox(
+                    width:25,
+                    height:25,
+                    child:new CircularProgressIndicator(value: downloadProgress.progress,
+                      valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                      semanticsLabel: 'Progress indicator',),
+                    )
+                    ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+              )
+              ),
           ),
-        ),
+          ),
+          SizedBox(height: getProportionateScreenWidth(20)),
+
+          ],
+          )
+          ),
         SizedBox(height: getProportionateScreenWidth(20)),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ...List.generate(widget.product.images.length,
-                (index) => buildSmallProductPreview(index)),
+                    (index) => buildSmallProductPreview(index)),
           ],
-        )
+        ),
+        SizedBox(height: getProportionateScreenWidth(20)),
       ],
+
     );
   }
 
@@ -66,8 +97,13 @@ class _ProductImagesState extends State<ProductImages> {
           border: Border.all(
               color: kPrimaryColor.withOpacity(selectedImage == index ? 1 : 0)),
         ),
-        child: //Image.network(widget.product.images[selectedImage].smallImageUrl),
-        Image.asset("assets/images/gf_gp.png"),
+        child: CachedNetworkImage(
+          imageUrl: widget.product.images[index].largeImageUrl,
+          progressIndicatorBuilder: (context, url, downloadProgress) =>
+              CircularProgressIndicator(value: downloadProgress.progress),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        ),
+        //Image.asset(widget.product.images[selectedImage].mediumImageUrl),
       ),
     );
   }

@@ -1,15 +1,18 @@
 import 'package:ecommerece_velocity_app/components/default_button.dart';
+import 'package:ecommerece_velocity_app/models/products.dart';
 import 'package:ecommerece_velocity_app/screens/cart/cart_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:ecommerece_velocity_app/models/Cart.dart';
 
-import '../../../constants.dart';
 import '../../../size_config.dart';
 
-class AddCard extends StatelessWidget {
-  const AddCard({
-    Key? key,
-  }) : super(key: key);
+class AddCart extends StatefulWidget {
+  final Product product;
+  const AddCart({Key? key, required this.product}) : super(key: key);
+
+  @override
+  AddCard createState() => AddCard();
+}
+class AddCard extends State<AddCart> {
 
   @override
   Widget build(BuildContext context) {

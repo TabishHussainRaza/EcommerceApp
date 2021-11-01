@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 ProductList productListFromJson(String str) => ProductList.fromJson(json.decode(str));
-
 String productListToJson(ProductList data) => json.encode(data.toJson());
 
 class ProductList {
@@ -78,6 +77,8 @@ class Product {
   bool isWishlisted;
   bool isItemInCart;
   bool showQuantityChanger;
+
+
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
     id: json["id"],
@@ -317,29 +318,102 @@ class Link {
     "active": active,
   };
 }
-/*
-Reviews Review = [];
+
 List<Product> demoProducts = [
-  Product(
-      id: 1,
+  Product
+    (
+      id: 8,
       sku: '14121412',
-      type: 'type',
-      name: 'name',
-      urlKey: 'urlKey',
-      price: 'price',
-      shortDescription: 'shortDescription',
-      description: 'description',
-      images: [],
+      type: 'simple',
+      name: 'Bakehouse Garlic Bread 300g',
+      urlKey: 'Gluten Free Bakehouse Garlic Bread 300g',
+      price: '3.80',
+      shortDescription: 'Gluten Free Bakehouse Garlic Bread is both gluten free and vegan friendly. Our crusty, golden garlic bread has no artificial flavours or colours, just good honest ingredients.',
+      description: 'Gluten Free Bakehouse Garlic Bread is both gluten free and vegan friendly. Our crusty, golden garlic bread has no artificial flavours or colours, just good honest ingredients.',
+      images: [
+        image(
+            id: 1,
+            path: "product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            url: "http://localhost/storage/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            originalImageUrl: "http://localhost/storage/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            smallImageUrl: "assets/images/gf_gp.png",
+            mediumImageUrl: "assets/images/gf_gp.png",
+            largeImageUrl: "http://192.168.8.193:8090/cache/large/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png"
+
+        )
+      ],
       videos: [],
-      baseImage: '',
-      createdAt: ,
-      updatedAt: updatedAt,
-      reviews: Review,
+      baseImage: BaseImage(
+          smallImageUrl: "http://192.168.8.193:8090/cache/small/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+          mediumImageUrl: "http://192.168.8.193:8090/cache/medium/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+          largeImageUrl: "http://192.168.8.193:8090/cache/large/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+          originalImageUrl: "http://192.168.8.193:8090/cache/original/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png"
+      ),
+      createdAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
+      updatedAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
+      reviews: Reviews(
+          total: 0,
+          totalRating: 0,
+          averageRating: 0,
+          percentage: []
+      ),
       inStock: true,
       isSaved: false,
       isWishlisted: false,
       isItemInCart: false,
       showQuantityChanger: true,
-      formatedPrice: ''
+      formatedPrice: '10,000.00'),
+  Product
+    (
+      id: 7,
+      sku: '14121412',
+      type: 'simple',
+      name: 'Gluten Free Flour 750g',
+      urlKey: 'Gluten Free Flour 750g',
+      price: '2.65',
+      shortDescription: 'Free From Plain Flour is all purpose plain flour for use in everyday cooking and baking contains gluten free, soy free, egg free, no artificial preservatives and no artificial colours or flavours.',
+      description: 'Free From Plain Flour is all purpose plain flour for use in everyday cooking and baking contains gluten free, soy free, egg free, no artificial preservatives and no artificial colours or flavours.',
+      images: [
+        image(
+            id: 1,
+            path: "product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            url: "http://localhost/storage/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            originalImageUrl: "http://localhost/storage/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            smallImageUrl: "assets/images/flour.png",
+            mediumImageUrl: "assets/images/flour.png",
+            largeImageUrl: "http://192.168.8.193:8090/cache/large/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png"
+
+        ),
+        image(
+            id: 2,
+            path: "product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            url: "http://localhost/storage/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            originalImageUrl: "http://localhost/storage/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            smallImageUrl: "http://192.168.8.193:8090/cache/small/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+            mediumImageUrl: "assets/images/flour_p2.png",
+            largeImageUrl: "http://192.168.8.193:8090/cache/large/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png"
+
+        )
+      ],
+      videos: [],
+      baseImage: BaseImage(
+          smallImageUrl: "http://192.168.8.193:8090/cache/small/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+          mediumImageUrl: "http://192.168.8.193:8090/cache/medium/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+          largeImageUrl: "http://192.168.8.193:8090/cache/large/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
+          originalImageUrl: "http://192.168.8.193:8090/cache/original/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png"
+      ),
+      createdAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
+      updatedAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
+      reviews: Reviews(
+          total: 0,
+          totalRating: 0,
+          averageRating: 0,
+          percentage: []
+      ),
+      inStock: true,
+      isSaved: false,
+      isWishlisted: false,
+      isItemInCart: false,
+      showQuantityChanger: true,
+      formatedPrice: '10,000.00')
 ];
-*/

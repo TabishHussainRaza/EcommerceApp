@@ -78,7 +78,7 @@ class _ProfileBody extends State<AddressBody> {
                       //backgroundColor: const Color(0xFFF5F6F9),phone
                       child: ListTile(
                         title: Text(snapshot.data[index].firstName +" "+ snapshot.data[index].lastName),
-                        subtitle: Text(snapshot.data[index].address1[0]+"\n "+snapshot.data[index].city+"\n "+snapshot.data[index].country+"\n "+snapshot.data[index].phone),
+                        subtitle: Text(snapshot.data[index].address1[0]+"\n "+snapshot.data[index].city+"\n "+snapshot.data[index].countryName+"\n "+snapshot.data[index].phone),
                         onTap: (){
                           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => UpdateAddressScreen(AddressID: snapshot.data[index],)), (Route<dynamic> route) => true);
                         },

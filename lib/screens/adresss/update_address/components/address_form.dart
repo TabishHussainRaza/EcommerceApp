@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:ecommerece_velocity_app/helper/keyboard.dart';
 import 'package:ecommerece_velocity_app/models/address.dart';
+import 'package:ecommerece_velocity_app/models/country.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../components/default_button.dart';
@@ -19,6 +20,7 @@ class UpdateAddressForm extends StatefulWidget {
 }
 
 class _AddAddressForm extends State<UpdateAddressForm> {
+  late Country SelectedCountry;
   late AddressData currentAddress;
   late SharedPreferences sharedPreferences;
   final _formKey = GlobalKey<FormState>();
@@ -62,6 +64,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                SizedBox(height: getProportionateScreenHeight(150)),
                 CircularProgressIndicator(
                   valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
                   value: snapshot.data,
@@ -90,7 +93,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
                 SizedBox(height: getProportionateScreenHeight(30)),
                 buildAddressFormField(),
                 SizedBox(height: getProportionateScreenHeight(30)),
-                buildCountryField(),
+                buildCountryFormField(),
                 SizedBox(height: getProportionateScreenHeight(30)),
                 buildCityFormField(),
                 SizedBox(height: getProportionateScreenHeight(30)),
@@ -168,6 +171,56 @@ class _AddAddressForm extends State<UpdateAddressForm> {
         //CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
       ),
     );
+  }
+  TextFormField buildCountryFormField() {
+    final TextEditingController _controller = TextEditingController();
+    if(!currentAddress.data.country.isEmpty){
+      _controller.text = currentAddress.data.countryName;
+    }else{
+      _controller.text = "Please Select";
+    }
+    return TextFormField(
+        onSaved: (value) => country = value,
+        controller: _controller,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            removeError(error: kAddressNullError);
+          }
+          return;
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            addError(error: kAddressNullError);
+            return "";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: "Country",
+          hintText: "Please Select Country",
+          // If  you are using latest version of flutter then label text and hint text shown like this
+          // if you r using flutter less then 1.20.* then maybe this is not working properly
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          suffixIcon: PopupMenuButton<Country>(
+            icon: const Icon(Icons.arrow_drop_down),
+            onSelected: (Country value) {
+              country = value.description;
+              SelectedCountry = Country(id:value.id, title:value.title, description:value.description);
+              _controller.text = value.description;
+            },
+            itemBuilder: (BuildContext context) {
+              return CountryList
+                  .map<PopupMenuItem<Country>>((Country value) {
+                return PopupMenuItem(
+                    child: Text(value.description), value: value);
+              }).toList();
+            },
+            //suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
+          ),
+        )
+
+    );
+
   }
 
   TextFormField buildCountryField() {
@@ -418,8 +471,8 @@ class _AddAddressForm extends State<UpdateAddressForm> {
       "address1[0]":
         addressStreet1
       ,
-      "country": country,
-      "country_name": country,
+      "country": SelectedCountry.title,
+      "country_name": SelectedCountry.description,
       "state": state,
       "city": city,
       "postcode": zipcode,

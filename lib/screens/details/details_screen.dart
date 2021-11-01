@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/Product.dart';
+import '../../models/products.dart';
 import 'components/add_card.dart';
 import 'components/body.dart';
 import 'components/custom_app_bar.dart';
@@ -13,14 +13,24 @@ class DetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProductDetailsArguments agrs =
         ModalRoute.of(context)!.settings.arguments as ProductDetailsArguments;
+    print(agrs.product.id);
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F6F9),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(AppBar().preferredSize.height),
-        child: CustomAppBar(),
-      ),
+      appBar: buildAppBar(context),
       body: Body(product: agrs.product),
-      bottomNavigationBar: const AddCard(),
+    );
+  }
+  AppBar buildAppBar(BuildContext context) {
+    final ProductDetailsArguments agrs =
+    ModalRoute.of(context)!.settings.arguments as ProductDetailsArguments;
+    return AppBar(
+      title: Column(
+        children:  [
+          Text(
+            agrs.product.name,
+            style: TextStyle(color: Colors.black),
+          ),
+        ],
+      ),
     );
   }
 }

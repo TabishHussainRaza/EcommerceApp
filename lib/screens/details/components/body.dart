@@ -1,11 +1,16 @@
+import 'dart:convert';
+import 'package:ecommerece_velocity_app/components/default_button.dart';
 import 'package:ecommerece_velocity_app/components/rounded_icon_btn.dart';
-import 'package:ecommerece_velocity_app/models/Product.dart';
+import 'package:ecommerece_velocity_app/models/oneProduct.dart' as OP;
+import 'package:ecommerece_velocity_app/models/products.dart';
 import 'package:ecommerece_velocity_app/size_config.dart';
 import 'package:flutter/material.dart';
-import 'package:ecommerece_velocity_app/models/products.dart' as Pro;
+import '../../../constants.dart';
 import 'product_description.dart';
 import 'product_images.dart';
 import 'top_rounded_container.dart';
+import 'package:http/http.dart' as http;
+import 'package:async/async.dart';
 
 class Body extends StatefulWidget {
   final Product product;
@@ -17,48 +22,9 @@ class Body extends StatefulWidget {
 
 class BodyContent extends State<Body> {
   int quantity = 1;
-  late Pro.Product CorrectProduct = Pro.Product(
-      id: 1,
-      sku: '14121412',
-      type: 'simple',
-      name: 'Gluten Free Bakehouse Garlic Bread 300g',
-      urlKey: 'Gluten Free Bakehouse Garlic Bread 300g',
-      price: '3.80',
-      shortDescription: 'Gluten Free Bakehouse Garlic Bread is both gluten free and vegan friendly. Our crusty, golden garlic bread has no artificial flavours or colours, just good honest ingredients.',
-      description: 'Gluten Free Bakehouse Garlic Bread is both gluten free and vegan friendly. Our crusty, golden garlic bread has no artificial flavours or colours, just good honest ingredients.',
-      images: [
-        Pro.image(
-            id: 1,
-            path: "product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
-            url: "http://localhost/storage/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
-            originalImageUrl: "http://localhost/storage/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
-            smallImageUrl: "http://192.168.8.193:8090/cache/small/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
-            mediumImageUrl: "http://192.168.8.193:8090/cache/medium/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
-            largeImageUrl: "http://192.168.8.193:8090/cache/large/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png"
+  late Product CorrectProduct;
 
-        )
-      ],
-      videos: [],
-      baseImage: Pro.BaseImage(
-          smallImageUrl: "http://192.168.8.193:8090/cache/small/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
-          mediumImageUrl: "http://192.168.8.193:8090/cache/medium/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
-          largeImageUrl: "http://192.168.8.193:8090/cache/large/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
-          originalImageUrl: "http://192.168.8.193:8090/cache/original/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png"
-      ),
-      createdAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
-      updatedAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
-      reviews: Pro.Reviews(
-          total: 0,
-          totalRating: 0,
-          averageRating: 0,
-          percentage: []
-      ),
-      inStock: true,
-      isSaved: false,
-      isWishlisted: false,
-      isItemInCart: false,
-      showQuantityChanger: true,
-      formatedPrice: '10,000.00');
+  final _closeMemo = AsyncMemoizer();
 
   increment_quantity() {
     setState(() {
@@ -76,75 +42,221 @@ class BodyContent extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        ProductImages(product: CorrectProduct),
-        TopRoundedContainer(
-          color: Colors.white,
-          child: Column(
-            children: [
-              ProductDescription(
-                product: CorrectProduct,
-                pressOnSeeMore: () {},
+    print(widget.product.id);
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: FutureBuilder(
+        future: getProduct(),
+        builder: (BuildContext context, AsyncSnapshot snapshot){
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return Center(
+              //child:
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                    value: snapshot.data,
+                    semanticsLabel: 'Progress indicator',
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(20)),
+                  const Text(
+                    'Please wait while it is loading.. ',
+                  ),
+                ],
               ),
-              TopRoundedContainer(
-                color: const Color(0xFFF6F7F9),
+
+            );
+          }  else if (snapshot.connectionState == ConnectionState.done){
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            else if (snapshot.hasData == true){
+              return ListView(
+                children: [
+                  ProductImages(product: CorrectProduct),
+                  ProductDescription(
+                    product: CorrectProduct,
+                    pressOnSeeMore: () {},
+                  ),
+                  SizedBox(width: getProportionateScreenWidth(20)),
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 3,
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: getProportionateScreenWidth(15),
+                                  top: getProportionateScreenWidth(10),
+                                ),
+                                child:
+                                Text(
+                                    CorrectProduct.formatedPrice,textAlign: TextAlign.justify,style: new TextStyle(fontSize: 22.0,fontWeight: FontWeight.bold)
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Container(
+                                    padding: EdgeInsets.all(getProportionateScreenWidth(15)),
+                                    decoration: BoxDecoration(
+                                      color:
+                                      CorrectProduct.isWishlisted ? Color(0xFFFFE6E6) : Color(0xFFF5F6F9),
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        bottomLeft: Radius.circular(20),
+                                      ),
+                                    ),
+                                    child:
+                                  Row(
+                                    children: [
+                                      RoundedIconBtn(
+                                        icon: Icons.remove,
+                                        showShadow: true,
+                                        press: () {
+                                          decrement_quantity();
+                                        },
+                                      ),
+                                      SizedBox(width: getProportionateScreenWidth(25)),
+                                      Text("$quantity"),
+                                      SizedBox(width: getProportionateScreenWidth(25)),
+                                      RoundedIconBtn(
+                                        icon: Icons.add,
+                                        showShadow: true,
+                                        press: () {
+                                          increment_quantity();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: getProportionateScreenWidth(15),
+                      top: getProportionateScreenWidth(20),
+                        right: getProportionateScreenWidth(15)
+                    ),
+                    child:   DefaultButton(
+                      text: "Add To Cart",
+                      press: () {},
+                    ),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: getProportionateScreenWidth(15),
+                      top: getProportionateScreenWidth(15),
+                    ),
+                    child: const Text(
+                        "Product Details",style: TextStyle(fontSize: 18.0,
+                      fontWeight: FontWeight.w800,)
+                    ),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: getProportionateScreenWidth(15),
+                      right: getProportionateScreenWidth(20),
+                      top: getProportionateScreenWidth(15),
+                      bottom: getProportionateScreenWidth(20),
+                    ),
+                    child: Text(
+                        CorrectProduct.description,textAlign: TextAlign.justify,style: TextStyle(fontSize: 16.0,
+                      )
+                    ),
+                  ),
+
+
+                  SizedBox(width: getProportionateScreenWidth(50)),
+                ],
+              );
+            }
+            else{
+              return Center(
+                //child:
                 child: Column(
-                  children: [
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.only(
-                        left: getProportionateScreenWidth(20),
-                        right: getProportionateScreenWidth(20),
-                        bottom: getProportionateScreenWidth(20),
-                      ),
-                      child: Row(
-                        children: [
-                          const Text("Quantity: "),
-                          const Spacer(),
-                          RoundedIconBtn(
-                            icon: Icons.remove,
-                            showShadow: true,
-                            press: () {
-                              decrement_quantity();
-                            },
-                          ),
-                          SizedBox(width: getProportionateScreenWidth(20)),
-                          Text("$quantity"),
-                          SizedBox(width: getProportionateScreenWidth(20)),
-                          RoundedIconBtn(
-                            icon: Icons.add,
-                            showShadow: true,
-                            press: () {
-                              increment_quantity();
-                            },
-                          ),
-                        ],
+                      padding:
+                      EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Oops', style: TextStyle(fontSize: getProportionateScreenWidth(35),fontWeight: FontWeight.w800),),
+                            SizedBox(height: SizeConfig.screenHeight * 0.01),
+                            Text(
+                                'Looks like something went wrong',
+                                style: TextStyle(fontSize: getProportionateScreenWidth(15))),
+                            ],
+                        ),
                       ),
                     ),
-                    SizedBox(width: getProportionateScreenWidth(40)),
-                    /*TopRoundedContainer(
-                      color: Colors.white,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: SizeConfig.screenWidth * 0.15,
-                          right: SizeConfig.screenWidth * 0.15,
-                          bottom: getProportionateScreenWidth(20),
-                          top: getProportionateScreenWidth(10),
-                        ),
-                        child: DefaultButton(
-                          text: "Add To Cart",
-                          press: () {},
-                        ),
-                      ),
-                    ),*/
 
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ],
+
+              );
+            }
+          }
+          else {
+            return Text('State: ${snapshot.connectionState}');
+          }
+        },
+      ),
     );
+
+
+  }
+
+  getProduct()  {
+    return this._closeMemo.runOnce(() async {
+      await Future.delayed(Duration(seconds: 2));
+      var id = widget.product.id;
+      String url = serverUrl+"products/$id";
+      var response = await http.get(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+            'Connection': 'keep-alive',
+          }
+      );
+      if(response.statusCode == 200) {
+        var jsonResponse = await json.decode(response.body);
+        if(jsonResponse != null) {
+          CorrectProduct = OP.productFromJson(response.body).data;
+          CorrectProduct.description = removeAllHtmlTags(CorrectProduct.description);
+          print(CorrectProduct.description);
+          return CorrectProduct;
+        }else{
+          return null;
+        }
+      }
+      else {
+        throw ("Not found");
+      }
+    });
+
+  }
+  String removeAllHtmlTags(String htmlText) {
+    RegExp exp = RegExp(
+        r"<[^>]*>",
+        multiLine: true,
+        caseSensitive: true
+    );
+    return htmlText.replaceAll(exp, '');
   }
 }
