@@ -671,12 +671,12 @@ class Customer {
   String lastName;
   String name;
   String gender;
-  DateTime dateOfBirth;
+  String? dateOfBirth;
   String phone;
   int status;
   DefaultLocale group;
-  DateTime createdAt;
-  DateTime updatedAt;
+  String? createdAt;
+  String? updatedAt;
 
   factory Customer.fromJson(Map<String, dynamic> json) => Customer(
     id: json["id"],
@@ -685,12 +685,12 @@ class Customer {
     lastName: json["last_name"],
     name: json["name"],
     gender: json["gender"],
-    dateOfBirth: DateTime.parse(json["date_of_birth"]),
+    dateOfBirth: json["date_of_birth"],
     phone: json["phone"],
     status: json["status"],
     group: DefaultLocale.fromJson(json["group"]),
-    createdAt: DateTime.parse(json["created_at"]),
-    updatedAt: DateTime.parse(json["updated_at"]),
+    createdAt: json["created_at"],
+    updatedAt: json["updated_at"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -700,12 +700,12 @@ class Customer {
     "last_name": lastName,
     "name": name,
     "gender": gender,
-    "date_of_birth": "${dateOfBirth.year.toString().padLeft(4, '0')}-${dateOfBirth.month.toString().padLeft(2, '0')}-${dateOfBirth.day.toString().padLeft(2, '0')}",
+    "date_of_birth": "dateOfBirth",
     "phone": phone,
     "status": status,
     "group": group.toJson(),
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
+    "created_at": createdAt,
+    "updated_at": updatedAt,
   };
 }
 
@@ -1103,9 +1103,9 @@ class DatumItem {
   String formatedTaxAmountRefunded;
   String baseTaxAmountRefunded;
   String formatedBaseTaxAmountRefunded;
-  int grantTotal;
+  double grantTotal;
   String formatedGrantTotal;
-  int baseGrantTotal;
+  double baseGrantTotal;
   String formatedBaseGrantTotal;
   List<dynamic> downloadableLinks;
   Additional additional;

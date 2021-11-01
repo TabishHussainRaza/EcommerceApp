@@ -7,13 +7,14 @@ import '../../../size_config.dart';
 
 class AddCart extends StatefulWidget {
   final Product product;
+
   const AddCart({Key? key, required this.product}) : super(key: key);
 
   @override
   AddCard createState() => AddCard();
 }
-class AddCard extends State<AddCart> {
 
+class AddCard extends State<AddCart> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,7 +46,10 @@ class AddCard extends State<AddCart> {
                   child: DefaultButton(
                     text: "Add to Cart",
                     press: () {
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => CartScreen()), (Route<dynamic> route) => true);
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => CartScreen()),
+                          (Route<dynamic> route) => true);
                     },
                   ),
                 ),
