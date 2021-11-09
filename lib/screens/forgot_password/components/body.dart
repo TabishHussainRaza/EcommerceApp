@@ -142,28 +142,34 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
     Map data = {
       'email': resetEmail
     };
-    var response = await http.post(Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(data));
-    if(response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      if(jsonResponse != null) {
+    try{
+      var response = await http.post(Uri.parse(url),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: json.encode(data));
+      if(response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        if(jsonResponse != null) {
+          setState(() {
+            _isLoading = false;
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          });
+          const snackBar = SnackBar(content: Text('We have e-mailed your password reset link!'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => false);
+        }
+      }
+      else {
         setState(() {
           _isLoading = false;
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
         });
-        const snackBar = SnackBar(content: Text('We have e-mailed your password reset link!'));
+        const snackBar = SnackBar(content: Text('Oops! Something went wrong.'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => false);
       }
-    }
-    else {
-      setState(() {
-        _isLoading = false;
-      });
-      const snackBar = SnackBar(content: Text('Oops! Something went wrong.'));
+    }catch(e){
+      const snackBar = SnackBar(content: Text('Oops something went wrong Try again'));
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

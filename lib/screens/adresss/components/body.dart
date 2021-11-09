@@ -61,7 +61,32 @@ class _ProfileBody extends State<AddressBody> {
             );
           }  else if (snapshot.connectionState == ConnectionState.done){
             if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Center(
+                //child:
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                      EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Oops', style: TextStyle(fontSize: getProportionateScreenWidth(35),fontWeight: FontWeight.w800),),
+                            SizedBox(height: SizeConfig.screenHeight * 0.01),
+                            Text(
+                                'Looks like something went wrong',
+                                style: TextStyle(fontSize: getProportionateScreenWidth(15))),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+
+              );
             }
             else if (snapshot.hasData == true){
               return ListView.builder(
@@ -130,28 +155,31 @@ class _ProfileBody extends State<AddressBody> {
     String url = serverUrl + "addresses";
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
-    var response = await http.get(Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie':name,
-          'Connection': 'keep-alive',
-        }
-    );
-    if(response.statusCode == 200) {
-      var jsonResponse = await json.decode(response.body);
-      if(jsonResponse != null) {
-        allAddressList = addressListFromJson(response.body).data;
-        if(allAddressList.isEmpty){
+    try{
+      var response = await http.get(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+            'Cookie':name,
+            'Connection': 'keep-alive',
+          }
+      );
+      if(response.statusCode == 200) {
+        var jsonResponse = await json.decode(response.body);
+        if(jsonResponse != null) {
+          allAddressList = addressListFromJson(response.body).data;
+          if(allAddressList.isEmpty){
+            return null;
+          }
+          return allAddressList;
+        }else{
           return null;
         }
-        return allAddressList;
-      }else{
-        return null;
       }
-    }
-    else {
+      else {
+        throw ("Not found");
+      }
+    }catch(e){
       throw ("Not found");
     }
-    throw ("Not found");
   }
 }

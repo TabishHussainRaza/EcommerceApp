@@ -65,8 +65,32 @@ class _OrderBody extends State<OrderBody> {
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
-              print("KK");
-              return Text('Error: ${snapshot.error}');
+              return Center(
+                //child:
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                      EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Oops', style: TextStyle(fontSize: getProportionateScreenWidth(35),fontWeight: FontWeight.w800),),
+                            SizedBox(height: SizeConfig.screenHeight * 0.01),
+                            Text(
+                                'Looks like something went wrong',
+                                style: TextStyle(fontSize: getProportionateScreenWidth(15))),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+
+              );
             } else if (snapshot.hasData == true) {
               return ListView.builder(
                 padding: const EdgeInsets.only(top: 10),
@@ -239,21 +263,24 @@ class _OrderBody extends State<OrderBody> {
     final id = sharedPreferences.getString('user_id') ?? '';
 
     String url = serverUrl + "orders?customer_id=$id";
-    var response = await http.get(Uri.parse(url), headers: {
-      'Content-Type': 'application/json',
-      'Cookie': name,
-      'Connection': 'keep-alive',
-    });
-    if (response.statusCode == 200) {
-      var jsonResponse = await json.decode(response.body);
-      if (jsonResponse != null) {
-        allOrdersList = ordersListFromJson(response.body).data;
-        if (allOrdersList.isEmpty) {
-          return null;
+    try{
+      var response = await http.get(Uri.parse(url), headers: {
+        'Content-Type': 'application/json',
+        'Cookie': name,
+        'Connection': 'keep-alive',
+      });
+      if (response.statusCode == 200) {
+        var jsonResponse = await json.decode(response.body);
+        if (jsonResponse != null) {
+          allOrdersList = ordersListFromJson(response.body).data;
+          if (allOrdersList.isEmpty) {
+            return null;
+          }
+          return allOrdersList;
         }
-        return allOrdersList;
+      } else {
       }
-    } else {
+    }catch(e){
       throw ("Not found");
     }
   }

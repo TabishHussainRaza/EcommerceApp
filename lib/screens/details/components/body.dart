@@ -70,7 +70,31 @@ class BodyContent extends State<Body> {
             );
           } else if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Center(
+                //child:
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding:
+                      EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Oops', style: TextStyle(fontSize: getProportionateScreenWidth(35),fontWeight: FontWeight.w800),),
+                            SizedBox(height: SizeConfig.screenHeight * 0.01),
+                            Text(
+                                'Looks like something went wrong',
+                                style: TextStyle(fontSize: getProportionateScreenWidth(15))),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+              );
             } else if (snapshot.hasData == true) {
               return ListView(
                 children: [
@@ -229,22 +253,26 @@ class BodyContent extends State<Body> {
       await Future.delayed(Duration(seconds: 2));
       var id = widget.product.id;
       String url = serverUrl + "products/$id";
-      var response = await http.get(Uri.parse(url), headers: {
-        'Content-Type': 'application/json',
-        'Connection': 'keep-alive',
-      });
-      if (response.statusCode == 200) {
-        var jsonResponse = await json.decode(response.body);
-        if (jsonResponse != null) {
-          CorrectProduct = OP.productFromJson(response.body).data;
-          CorrectProduct.description =
-              removeAllHtmlTags(CorrectProduct.description);
-          print(CorrectProduct.description);
-          return CorrectProduct;
+      try{
+        var response = await http.get(Uri.parse(url), headers: {
+          'Content-Type': 'application/json',
+          'Connection': 'keep-alive',
+        });
+        if (response.statusCode == 200) {
+          var jsonResponse = await json.decode(response.body);
+          if (jsonResponse != null) {
+            CorrectProduct = OP.productFromJson(response.body).data;
+            CorrectProduct.description =
+                removeAllHtmlTags(CorrectProduct.description);
+            print(CorrectProduct.description);
+            return CorrectProduct;
+          } else {
+            return null;
+          }
         } else {
-          return null;
+          throw ("Not found");
         }
-      } else {
+      }catch(e){
         throw ("Not found");
       }
     });

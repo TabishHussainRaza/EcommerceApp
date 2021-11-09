@@ -71,7 +71,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 _isLoading =true;
                 const snackBar = SnackBar(content: Text('Processing...'));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
+                errors.clear();
                 Register();
                 KeyboardUtil.hideKeyboard(context);
               }
@@ -226,24 +226,30 @@ class _SignUpFormState extends State<SignUpForm> {
       'password_confirmation': conform_password
     };
 
-    var response = await http.post(Uri.parse(url), body: data);
-    if(response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      if(jsonResponse != null) {
+    try{
+      var response = await http.post(Uri.parse(url), body: data);
+      if(response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        if(jsonResponse != null) {
+          setState(() {
+            _isLoading = false;
+          });
+          const snackBar = SnackBar(content: Text('Registered Successfully'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => false);
+        }
+      }
+      else {
         setState(() {
           _isLoading = false;
         });
-        const snackBar = SnackBar(content: Text('Registered Successfully'));
+        errorMsg = response.body;
+        const snackBar = SnackBar(content: Text('Oops! Ran into some problem. Try again'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => false);
       }
-    }
-    else {
-      setState(() {
-        _isLoading = false;
-      });
-      errorMsg = response.body;
-      const snackBar = SnackBar(content: Text('Oops! Ran into some problem. Try again'));
+    }catch(e){
+      const snackBar = SnackBar(content: Text('Oops something went wrong Try again'));
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

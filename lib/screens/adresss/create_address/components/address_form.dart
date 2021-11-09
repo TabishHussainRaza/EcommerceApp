@@ -1,11 +1,13 @@
 import 'dart:convert';
+
 import 'package:ecommerece_velocity_app/helper/keyboard.dart';
 import 'package:ecommerece_velocity_app/models/country.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../components/default_button.dart';
 import '../../../../components/form_error.dart';
-import 'package:http/http.dart' as http;
 import '../../../../constants.dart';
 import '../../../../size_config.dart';
 import '../../main_address.dart';
@@ -82,11 +84,11 @@ class _AddAddressForm extends State<AddAddressForm> {
             press: () {
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
-                _isLoading =true;
+                _isLoading = true;
                 // if all are valid then go to success screen
                 const snackBar = SnackBar(content: Text('Processing...'));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
+                errors.clear();
                 AddAdress();
                 KeyboardUtil.hideKeyboard(context);
               }
@@ -268,7 +270,7 @@ class _AddAddressForm extends State<AddAddressForm> {
   TextFormField buildCompanyFormField() {
     return TextFormField(
       onSaved: (newValue) => company = newValue,
-      decoration:const InputDecoration(
+      decoration: const InputDecoration(
         labelText: "Company Name",
         hintText: "Company Name",
         // If  you are using latest version of flutter then label text and hint text shown like this
@@ -282,7 +284,7 @@ class _AddAddressForm extends State<AddAddressForm> {
   TextFormField buildLastNameFormField() {
     return TextFormField(
       onSaved: (newValue) => lastName = newValue,
-      decoration:const InputDecoration(
+      decoration: const InputDecoration(
         labelText: "Last Name",
         hintText: "Enter your last name",
         // If  you are using latest version of flutter then label text and hint text shown like this
@@ -309,7 +311,7 @@ class _AddAddressForm extends State<AddAddressForm> {
         }
         return null;
       },
-      decoration:const InputDecoration(
+      decoration: const InputDecoration(
         labelText: "First Name",
         hintText: "Enter your first name",
         // If  you are using latest version of flutter then label text and hint text shown like this
@@ -348,36 +350,32 @@ class _AddAddressForm extends State<AddAddressForm> {
             icon: const Icon(Icons.arrow_drop_down),
             onSelected: (Country value) {
               country = value.description;
-              SelectedCountry = Country(id:value.id, title:value.title, description:value.description);
+              SelectedCountry = Country(
+                  id: value.id,
+                  title: value.title,
+                  description: value.description);
               _controller.text = value.description;
             },
             itemBuilder: (BuildContext context) {
-              return CountryList
-                  .map<PopupMenuItem<Country>>((Country value) {
+              return CountryList.map<PopupMenuItem<Country>>((Country value) {
                 return PopupMenuItem(
                     child: Text(value.description), value: value);
               }).toList();
             },
             //suffixIcon: CustomSurffixIcon(svgIcon: "assets/icons/Location point.svg"),
           ),
-        )
-
-    );
-
+        ));
   }
 
-
   AddAdress() async {
-    String url = serverUrl+"addresses/create";
+    String url = serverUrl + "addresses/create";
     Map data = {
       "first_name": firstName,
       "last_name": lastName,
       "company_name": company,
       "vat_id": "",
       'is_default': "false",
-      "address1[0]":
-        addressStreet1
-      ,
+      "address1[0]": addressStreet1,
       "country": SelectedCountry.title,
       "country_name": SelectedCountry.description,
       "state": state,
@@ -388,28 +386,40 @@ class _AddAddressForm extends State<AddAddressForm> {
 
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
-    var response = await http.post(Uri.parse(url),
-        headers: {
-      'Cookie':name,
-    }, body: data);
 
-    setState(() {
-      _isLoading = false;
-    });
-    if(response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      if(jsonResponse != null) {
-        setState(() {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        });
-        const snackBar = SnackBar(content: Text('Address Created Successfully'));
+    try {
+      var response = await http.post(Uri.parse(url),
+          headers: {
+            'Cookie': name,
+          },
+          body: data);
+
+      setState(() {
+        _isLoading = false;
+      });
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        if (jsonResponse != null) {
+          setState(() {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          });
+          const snackBar =
+              SnackBar(content: Text('Address Created Successfully'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          //Navigator.of(context).pushNamed('/address');
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (BuildContext context) => const AddressScreen()),
+              (Route<dynamic> route) => true);
+        }
+      } else {
+        const snackBar =
+            SnackBar(content: Text('Oops! Ran into some problem. Try again'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        //Navigator.of(context).pushNamed('/address');
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const AddressScreen()), (Route<dynamic> route) => true);
       }
-    }
-    else {
-      const snackBar = SnackBar(content: Text('Oops! Ran into some problem. Try again'));
+    } catch (e) {
+      const snackBar =
+          SnackBar(content: Text('Oops! Ran into some problem. Try again'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }

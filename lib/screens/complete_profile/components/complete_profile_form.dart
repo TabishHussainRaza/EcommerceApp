@@ -63,25 +63,57 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
         future: getCustomerDetails(),
         builder: (BuildContext context, AsyncSnapshot snapshot){
           if(snapshot.data == null){
-            return Center(
-              //child:
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: getProportionateScreenHeight(150)),
-                  CircularProgressIndicator(
-                    valueColor: const AlwaysStoppedAnimation<Color>(kPrimaryColor),
-                    value: snapshot.data,
-                    semanticsLabel: 'Progress indicator',
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(20)),
-                  const Text(
-                    'Please wait while it is loading.. ',
-                  ),
-                ],
-              ),
-
-            );
+            if (snapshot.hasError) {
+              return Center(
+                //child:
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: getProportionateScreenWidth(20)),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: getProportionateScreenHeight(150)),
+                            Text(
+                              'Oops',
+                              style: TextStyle(
+                                  fontSize: getProportionateScreenWidth(35),
+                                  fontWeight: FontWeight.w800),
+                            ),
+                            SizedBox(height: SizeConfig.screenHeight * 0.01),
+                            Text('Looks like something went wrong',
+                                style: TextStyle(
+                                    fontSize: getProportionateScreenWidth(15))),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return Center(
+                //child:
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: getProportionateScreenHeight(150)),
+                    CircularProgressIndicator(
+                      valueColor:
+                      const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                      value: snapshot.data,
+                      semanticsLabel: 'Progress indicator',
+                    ),
+                    SizedBox(height: getProportionateScreenHeight(20)),
+                    const Text(
+                      'Please wait while it is loading.. ',
+                    ),
+                  ],
+                ),
+              );
+            }
           }else{
             return Form(
               key: _formKey,
@@ -247,30 +279,31 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
     );
   }
 
-  Future<CustomerData> getCustomerDetails() async {
+  getCustomerDetails() async {
     var id = widget.CurrentCustomer.data.id;
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
 
     String url = serverUrl + "customers/$id";
-    var response = await http.get(Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie':name,
-          'Connection': 'keep-alive',
-        }
-    );
-    if(response.statusCode == 200) {
-      var jsonResponse = await json.decode(response.body);
+    try{
+      var response = await http.get(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+            'Cookie':name,
+            'Connection': 'keep-alive',
+          }
+      );
+      if(response.statusCode == 200) {
+        var jsonResponse = await json.decode(response.body);
 
-      if(jsonResponse != null) {
-        currentCustomer =customerDataFromJson(response.body);
-        return currentCustomer;
+        if(jsonResponse != null) {
+          currentCustomer =customerDataFromJson(response.body);
+          return currentCustomer;
+        }
       }
+    }catch(e){
+      throw ("Not found");
     }
-    else {
-    }
-    throw ("Not found");
   }
 
   UpdateProfile() async {

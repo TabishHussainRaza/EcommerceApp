@@ -1,12 +1,14 @@
 import 'dart:convert';
+
 import 'package:ecommerece_velocity_app/helper/keyboard.dart';
 import 'package:ecommerece_velocity_app/models/address.dart';
 import 'package:ecommerece_velocity_app/models/country.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../../components/default_button.dart';
 import '../../../../components/form_error.dart';
-import 'package:http/http.dart' as http;
 import '../../../../constants.dart';
 import '../../../../size_config.dart';
 import '../../main_address.dart';
@@ -60,83 +62,148 @@ class _AddAddressForm extends State<UpdateAddressForm> {
       future: getAddressDetails(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.data == null) {
-          return Center(
-            //child:
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: getProportionateScreenHeight(150)),
-                CircularProgressIndicator(
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(kPrimaryColor),
-                  value: snapshot.data,
-                  semanticsLabel: 'Progress indicator',
-                ),
-                SizedBox(height: getProportionateScreenHeight(20)),
-                const Text(
-                  'Please wait while it is loading.. ',
-                ),
-              ],
-            ),
-          );
+          if (snapshot.hasError) {
+            return Center(
+              //child:
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: getProportionateScreenWidth(20)),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Oops',
+                            style: TextStyle(
+                                fontSize: getProportionateScreenWidth(35),
+                                fontWeight: FontWeight.w800),
+                          ),
+                          SizedBox(height: SizeConfig.screenHeight * 0.01),
+                          Text('Looks like something went wrong',
+                              style: TextStyle(
+                                  fontSize: getProportionateScreenWidth(15))),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Center(
+              //child:
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: getProportionateScreenHeight(150)),
+                  CircularProgressIndicator(
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                    value: snapshot.data,
+                    semanticsLabel: 'Progress indicator',
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(20)),
+                  const Text(
+                    'Please wait while it is loading.. ',
+                  ),
+                ],
+              ),
+            );
+          }
         } else {
-          return Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                buildFirstNameFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildLastNameFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildCompanyFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildPhoneNumberFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildAddressFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildCountryFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildCityFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildStateFormField(),
-                SizedBox(height: getProportionateScreenHeight(30)),
-                buildPostalFormField(),
-                FormError(errors: errors),
-                SizedBox(height: getProportionateScreenHeight(40)),
-                DefaultButton(
-                  text: "Update Address",
-                  press: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      _isLoading = true;
-                      // if all are valid then go to success screen
-                      const snackBar = SnackBar(content: Text('Processing...'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          if (snapshot.hasData == true) {
+            return Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  buildFirstNameFormField(),
+                  SizedBox(height: getProportionateScreenHeight(30)),
+                  buildLastNameFormField(),
+                  SizedBox(height: getProportionateScreenHeight(30)),
+                  buildCompanyFormField(),
+                  SizedBox(height: getProportionateScreenHeight(30)),
+                  buildPhoneNumberFormField(),
+                  SizedBox(height: getProportionateScreenHeight(30)),
+                  buildAddressFormField(),
+                  SizedBox(height: getProportionateScreenHeight(30)),
+                  buildCountryFormField(),
+                  SizedBox(height: getProportionateScreenHeight(30)),
+                  buildCityFormField(),
+                  SizedBox(height: getProportionateScreenHeight(30)),
+                  buildStateFormField(),
+                  SizedBox(height: getProportionateScreenHeight(30)),
+                  buildPostalFormField(),
+                  FormError(errors: errors),
+                  SizedBox(height: getProportionateScreenHeight(40)),
+                  DefaultButton(
+                    text: "Update Address",
+                    press: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        _isLoading = true;
+                        // if all are valid then go to success screen
+                        const snackBar =
+                            SnackBar(content: Text('Processing...'));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        errors.clear();
+                        UpdateAddress();
+                        KeyboardUtil.hideKeyboard(context);
+                      }
+                    },
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(35)),
+                  DefaultButton(
+                    text: "Delete Address",
+                    press: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        _isLoading = true;
+                        // if all are valid then go to success screen
+                        const snackBar =
+                            SnackBar(content: Text('Processing...'));
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-                      UpdateAddress();
-                      KeyboardUtil.hideKeyboard(context);
-                    }
-                  },
-                ),
-                SizedBox(height: getProportionateScreenHeight(35)),
-                DefaultButton(
-                  text: "Delete Address",
-                  press: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      _isLoading = true;
-                      // if all are valid then go to success screen
-                      const snackBar = SnackBar(content: Text('Processing...'));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-                      DeleteAddress();
-                      KeyboardUtil.hideKeyboard(context);
-                    }
-                  },
-                ),
-              ],
-            ),
-          );
+                        errors.clear();
+                        DeleteAddress();
+                        KeyboardUtil.hideKeyboard(context);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Center(
+              //child:
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: getProportionateScreenWidth(20)),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Oops',
+                            style: TextStyle(
+                                fontSize: getProportionateScreenWidth(35),
+                                fontWeight: FontWeight.w800),
+                          ),
+                          SizedBox(height: SizeConfig.screenHeight * 0.01),
+                          Text('Looks like something went wrong',
+                              style: TextStyle(
+                                  fontSize: getProportionateScreenWidth(15))),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
         }
       },
     );
@@ -430,25 +497,28 @@ class _AddAddressForm extends State<UpdateAddressForm> {
     );
   }
 
-  Future<AddressData> getAddressDetails() async {
+  getAddressDetails() async {
     var id = widget.AddressID.id;
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
 
     String url = serverUrl + "addresses/$id";
-    var response = await http.get(Uri.parse(url), headers: {
-      'Cookie': name,
-      'Connection': 'keep-alive',
-    });
-    if (response.statusCode == 200) {
-      var jsonResponse = await json.decode(response.body);
+    try {
+      var response = await http.get(Uri.parse(url), headers: {
+        'Cookie': name,
+        'Connection': 'keep-alive',
+      });
+      if (response.statusCode == 200) {
+        var jsonResponse = await json.decode(response.body);
 
-      if (jsonResponse != null) {
-        currentAddress = addressDataFromJson(response.body);
-        return currentAddress;
-      }
-    } else {}
-    throw ("Not found");
+        if (jsonResponse != null) {
+          currentAddress = addressDataFromJson(response.body);
+          return currentAddress;
+        }
+      } else {}
+    } catch (e) {
+      throw ("Not found");
+    }
   }
 
   UpdateAddress() async {
@@ -470,27 +540,32 @@ class _AddAddressForm extends State<UpdateAddressForm> {
     };
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
-    var response = await http.put(Uri.parse(url),
-        headers: {
-          'Cookie':name,
-        },
-        body: data);
+    try {
+      var response = await http.put(Uri.parse(url),
+          headers: {
+            'Cookie': name,
+          },
+          body: data);
 
-    setState(() {
-      _isLoading = false;
-    });
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      if (jsonResponse != null) {
-        setState(() {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        });
+      setState(() {
+        _isLoading = false;
+      });
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        if (jsonResponse != null) {
+          setState(() {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          });
+          const snackBar =
+              SnackBar(content: Text('Address Updated Successfully'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+      } else {
         const snackBar =
-            SnackBar(content: Text('Address Updated Successfully'));
+            SnackBar(content: Text('Oops! Ran into some problem. Try again'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
       }
-    } else {
+    } catch (e) {
       const snackBar =
           SnackBar(content: Text('Oops! Ran into some problem. Try again'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -502,27 +577,34 @@ class _AddAddressForm extends State<UpdateAddressForm> {
     String url = serverUrl + "addresses/$id";
     sharedPreferences = await SharedPreferences.getInstance();
     final name = sharedPreferences.getString('cookies') ?? '';
-    var response = await http.delete(Uri.parse(url), headers: {
-      'Cookie': name,
-    });
 
-    setState(() {
-      _isLoading = false;
-    });
-    if (response.statusCode == 200) {
-      var jsonResponse = json.decode(response.body);
-      if (jsonResponse != null) {
-        setState(() {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        });
-        const snackBar = SnackBar(content: Text('Address Deleted'));
+    try {
+      var response = await http.delete(Uri.parse(url), headers: {
+        'Cookie': name,
+      });
+
+      setState(() {
+        _isLoading = false;
+      });
+      if (response.statusCode == 200) {
+        var jsonResponse = json.decode(response.body);
+        if (jsonResponse != null) {
+          setState(() {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          });
+          const snackBar = SnackBar(content: Text('Address Deleted'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: (BuildContext context) => const AddressScreen()),
+              (Route<dynamic> route) => true);
+        }
+      } else {
+        const snackBar =
+            SnackBar(content: Text('Oops! Ran into some problem. Try again'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-                builder: (BuildContext context) => const AddressScreen()),
-            (Route<dynamic> route) => true);
       }
-    } else {
+    } catch (e) {
       const snackBar =
           SnackBar(content: Text('Oops! Ran into some problem. Try again'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
