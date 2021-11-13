@@ -158,10 +158,11 @@ class _ForgotPassFormState extends State<ForgotPassForm> {
           });
           const snackBar = SnackBar(content: Text('We have e-mailed your password reset link!'));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => false);
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => true);
         }
       }
       else {
+        print(response.body);
         setState(() {
           _isLoading = false;
         });
