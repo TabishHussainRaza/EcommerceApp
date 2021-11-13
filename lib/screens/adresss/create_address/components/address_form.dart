@@ -80,6 +80,7 @@ class _AddAddressForm extends State<AddAddressForm> {
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
           DefaultButton(
+            condition: true,
             text: "continue",
             press: () {
               if (_formKey.currentState!.validate()) {

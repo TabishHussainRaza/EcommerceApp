@@ -1,9 +1,10 @@
-import 'package:ecommerece_velocity_app/models/products.dart';
 import 'dart:convert';
+
+import 'package:ecommerece_velocity_app/models/products.dart';
 
 SingleProduct productFromJson(String str) => SingleProduct.fromJson(json.decode(str));
 
-String productToJson(Product data) => json.encode(data.toJson());
+String productToJson(SingleProduct data) => json.encode(data.toJson());
 
 class SingleProduct {
   SingleProduct({

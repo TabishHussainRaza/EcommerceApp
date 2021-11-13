@@ -69,6 +69,7 @@ class _BodyState extends State<Body> {
                     ),
                     Spacer(flex: 1),
                     DefaultButton(
+                      condition: true,
                       text: "Lets Get Started",
                       press: () {
                         //Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => SignInPage()), (Route<dynamic> route) => true);

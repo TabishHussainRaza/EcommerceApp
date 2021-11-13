@@ -71,6 +71,7 @@ class _SignFormState extends State<SignForm> {
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
           DefaultButton(
+            condition: true,
             text: "Continue",
             press: () {
               if (_formKey.currentState!.validate()) {
@@ -165,6 +166,7 @@ class _SignFormState extends State<SignForm> {
       'password': password,
     };
 
+    print(url);
     try{
       var response = await http.post(Uri.parse(url),
           headers: <String, String>{
@@ -172,6 +174,7 @@ class _SignFormState extends State<SignForm> {
             'Connection': 'keep-alive',
           },
           body: json.encode(data));
+      print(response.statusCode);
       if(response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
         if(jsonResponse != null) {

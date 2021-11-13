@@ -1,13 +1,8 @@
-// To parse this JSON data, do
-//
-//     final productList = productListFromJson(jsonString);
-
-import 'package:meta/meta.dart';
 import 'dart:convert';
-import 'package:flutter/material.dart';
 
 ProductList productListFromJson(String str) => ProductList.fromJson(json.decode(str));
-String productListToJson(ProductList data) => json.encode(data.toJson());
+
+String productToJson(ProductList data) => json.encode(data.toJson());
 
 class ProductList {
   ProductList({
@@ -34,6 +29,7 @@ class ProductList {
 }
 
 class Product {
+
   Product({
     required this.id,
     required this.sku,
@@ -49,8 +45,9 @@ class Product {
     required this.baseImage,
     required this.createdAt,
     required this.updatedAt,
-    required this.reviews,
+    //required this.relatedProducts,
     required this.inStock,
+    required this.totalQuantity,
     required this.isSaved,
     required this.isWishlisted,
     required this.isItemInCart,
@@ -71,14 +68,13 @@ class Product {
   BaseImage baseImage;
   DateTime createdAt;
   DateTime updatedAt;
-  Reviews reviews;
+  //List<RelatedProduct> relatedProducts;
   bool inStock;
+  int totalQuantity;
   bool isSaved;
   bool isWishlisted;
   bool isItemInCart;
   bool showQuantityChanger;
-
-
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
     id: json["id"],
@@ -95,8 +91,9 @@ class Product {
     baseImage: BaseImage.fromJson(json["base_image"]),
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
-    reviews: Reviews.fromJson(json["reviews"]),
+    //relatedProducts: List<RelatedProduct>.from(json["related-products"].map((x) => RelatedProduct.fromJson(x))),
     inStock: json["in_stock"],
+    totalQuantity: json["total_quantity"],
     isSaved: json["is_saved"],
     isWishlisted: json["is_wishlisted"],
     isItemInCart: json["is_item_in_cart"],
@@ -118,8 +115,9 @@ class Product {
     "base_image": baseImage.toJson(),
     "created_at": createdAt.toIso8601String(),
     "updated_at": updatedAt.toIso8601String(),
-    "reviews": reviews.toJson(),
+    //"related-products": List<dynamic>.from(relatedProducts.map((x) => x.toJson())),
     "in_stock": inStock,
+    "total_quantity": totalQuantity,
     "is_saved": isSaved,
     "is_wishlisted": isWishlisted,
     "is_item_in_cart": isItemInCart,
@@ -195,31 +193,211 @@ class image {
   };
 }
 
-class Reviews {
-  Reviews({
-    required this.total,
-    required this.totalRating,
-    required this.averageRating,
-    required this.percentage,
+class RelatedProduct {
+  RelatedProduct({
+    required this.id,
+    required this.sku,
+    required this.type,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.parentId,
+    required this.attributeFamilyId,
+    required this.additional,
+    required this.shortDescription,
+    required this.description,
+    required this.name,
+    required this.urlKey,
+    required this.taxCategoryId,
+    required this.relatedProductNew,
+    required this.featured,
+    required this.visibleIndividually,
+    required this.status,
+    required this.color,
+    required this.size,
+    required this.brand,
+    required this.guestCheckout,
+    required this.productNumber,
+    required this.metaTitle,
+    required this.metaKeywords,
+    required this.metaDescription,
+    required this.price,
+    required this.cost,
+    required this.specialPrice,
+    required this.specialPriceFrom,
+    required this.specialPriceTo,
+    required this.length,
+    required this.width,
+    required this.height,
+    required this.weight,
+    required this.pivot,
+    required this.attributeFamily,
   });
 
-  int total;
-  int totalRating;
-  int averageRating;
-  List<dynamic> percentage;
+  int id;
+  String sku;
+  String type;
+  DateTime createdAt;
+  DateTime updatedAt;
+  dynamic parentId;
+  int attributeFamilyId;
+  dynamic additional;
+  String shortDescription;
+  String description;
+  String name;
+  String urlKey;
+  int taxCategoryId;
+  int relatedProductNew;
+  int featured;
+  int visibleIndividually;
+  int status;
+  int color;
+  int size;
+  dynamic brand;
+  int guestCheckout;
+  String productNumber;
+  String metaTitle;
+  String metaKeywords;
+  String metaDescription;
+  String price;
+  dynamic cost;
+  dynamic specialPrice;
+  dynamic specialPriceFrom;
+  dynamic specialPriceTo;
+  String length;
+  String width;
+  String height;
+  String weight;
+  Pivot pivot;
+  AttributeFamily attributeFamily;
 
-  factory Reviews.fromJson(Map<String, dynamic> json) => Reviews(
-    total: json["total"],
-    totalRating: json["total_rating"],
-    averageRating: json["average_rating"],
-    percentage: List<dynamic>.from(json["percentage"].map((x) => x)),
+  factory RelatedProduct.fromJson(Map<String, dynamic> json) => RelatedProduct(
+    id: json["id"],
+    sku: json["sku"],
+    type: json["type"],
+    createdAt: DateTime.parse(json["created_at"]),
+    updatedAt: DateTime.parse(json["updated_at"]),
+    parentId: json["parent_id"],
+    attributeFamilyId: json["attribute_family_id"],
+    additional: json["additional"],
+    shortDescription: json["short_description"],
+    description: json["description"],
+    name: json["name"],
+    urlKey: json["url_key"],
+    taxCategoryId: json["tax_category_id"],
+    relatedProductNew: json["new"],
+    featured: json["featured"],
+    visibleIndividually: json["visible_individually"],
+    status: json["status"],
+    color: json["color"],
+    size: json["size"],
+    brand: json["brand"],
+    guestCheckout: json["guest_checkout"],
+    productNumber: json["product_number"],
+    metaTitle: json["meta_title"],
+    metaKeywords: json["meta_keywords"],
+    metaDescription: json["meta_description"],
+    price: json["price"],
+    cost: json["cost"],
+    specialPrice: json["special_price"],
+    specialPriceFrom: json["special_price_from"],
+    specialPriceTo: json["special_price_to"],
+    length: json["length"],
+    width: json["width"],
+    height: json["height"],
+    weight: json["weight"],
+    pivot: Pivot.fromJson(json["pivot"]),
+    attributeFamily: AttributeFamily.fromJson(json["attribute_family"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "total": total,
-    "total_rating": totalRating,
-    "average_rating": averageRating,
-    "percentage": List<dynamic>.from(percentage.map((x) => x)),
+    "id": id,
+    "sku": sku,
+    "type": type,
+    "created_at": createdAt.toIso8601String(),
+    "updated_at": updatedAt.toIso8601String(),
+    "parent_id": parentId,
+    "attribute_family_id": attributeFamilyId,
+    "additional": additional,
+    "short_description": shortDescription,
+    "description": description,
+    "name": name,
+    "url_key": urlKey,
+    "tax_category_id": taxCategoryId,
+    "new": relatedProductNew,
+    "featured": featured,
+    "visible_individually": visibleIndividually,
+    "status": status,
+    "color": color,
+    "size": size,
+    "brand": brand,
+    "guest_checkout": guestCheckout,
+    "product_number": productNumber,
+    "meta_title": metaTitle,
+    "meta_keywords": metaKeywords,
+    "meta_description": metaDescription,
+    "price": price,
+    "cost": cost,
+    "special_price": specialPrice,
+    "special_price_from": specialPriceFrom,
+    "special_price_to": specialPriceTo,
+    "length": length,
+    "width": width,
+    "height": height,
+    "weight": weight,
+    "pivot": pivot.toJson(),
+    "attribute_family": attributeFamily.toJson(),
+  };
+}
+
+class AttributeFamily {
+  AttributeFamily({
+    required this.id,
+    required this.code,
+    required this.name,
+    required this.status,
+    required this.isUserDefined,
+  });
+
+  int id;
+  String code;
+  String name;
+  int status;
+  int isUserDefined;
+
+  factory AttributeFamily.fromJson(Map<String, dynamic> json) => AttributeFamily(
+    id: json["id"],
+    code: json["code"],
+    name: json["name"],
+    status: json["status"],
+    isUserDefined: json["is_user_defined"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "code": code,
+    "name": name,
+    "status": status,
+    "is_user_defined": isUserDefined,
+  };
+}
+
+class Pivot {
+  Pivot({
+    required this.parentId,
+    required this.childId,
+  });
+
+  int parentId;
+  int childId;
+
+  factory Pivot.fromJson(Map<String, dynamic> json) => Pivot(
+    parentId: json["parent_id"],
+    childId: json["child_id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "parent_id": parentId,
+    "child_id": childId,
   };
 }
 
@@ -351,12 +529,8 @@ List<Product> demoProducts = [
       ),
       createdAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
       updatedAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
-      reviews: Reviews(
-          total: 0,
-          totalRating: 0,
-          averageRating: 0,
-          percentage: []
-      ),
+      //relatedProducts:[],
+      totalQuantity:0,
       inStock: true,
       isSaved: false,
       isWishlisted: false,
@@ -396,6 +570,8 @@ List<Product> demoProducts = [
         )
       ],
       videos: [],
+      //relatedProducts:[],
+      totalQuantity:0,
       baseImage: BaseImage(
           smallImageUrl: "http://192.168.8.193:8090/cache/small/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
           mediumImageUrl: "http://192.168.8.193:8090/cache/medium/product/1/pqrdYhgMrN4N2HBbCJmGbbIA0cdiBSEod5kXjnea.png",
@@ -404,12 +580,7 @@ List<Product> demoProducts = [
       ),
       createdAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
       updatedAt: DateTime.parse("2021-08-29T01:34:43.000000Z"),
-      reviews: Reviews(
-          total: 0,
-          totalRating: 0,
-          averageRating: 0,
-          percentage: []
-      ),
+
       inStock: true,
       isSaved: false,
       isWishlisted: false,

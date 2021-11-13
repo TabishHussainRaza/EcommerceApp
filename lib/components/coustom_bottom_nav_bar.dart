@@ -1,3 +1,4 @@
+import 'package:ecommerece_velocity_app/screens/category/category_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ecommerece_velocity_app/screens/home/home_screen.dart';
@@ -49,7 +50,9 @@ class CustomBottomNavBar extends StatelessWidget {
                   color: MenuState.Category == selectedMenu ? kPrimaryColor : inActiveIconColor,
 
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => CategorySection()), (Route<dynamic> route) => false);
+                },
               ),
               IconButton(
                 icon: SvgPicture.asset(

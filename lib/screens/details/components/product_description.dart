@@ -52,7 +52,7 @@ class ProductDescription extends StatelessWidget {
                       child:
                       Row(
                         children: [
-                          if (product.inStock) const Text("In Stock", style: TextStyle(fontSize: 18.0, color: Colors.green,fontWeight: FontWeight.w800,) ) else const Text("Out of Stock", style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.w800,),
+                          if (product.inStock)  Text("In Stock (" + product.totalQuantity.toString() +" Left)" , style: TextStyle(fontSize: 18.0, color: Colors.green,fontWeight: FontWeight.w800,) ) else Text("Out of Stock (" + product.totalQuantity.toString() +" Left)" , style: TextStyle(fontSize: 18.0, color: Colors.red, fontWeight: FontWeight.w800,),
                           )
                         ],
                       ),
@@ -60,7 +60,8 @@ class ProductDescription extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
+            SizedBox(height: getProportionateScreenWidth(30)),
           ],
         ),
 

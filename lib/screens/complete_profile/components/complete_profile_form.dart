@@ -147,6 +147,7 @@ class _CompleteProfileFormState extends State<CompleteProfileForm> {
                   FormError(errors: errors),
                   SizedBox(height: getProportionateScreenHeight(20)),
                   DefaultButton(
+                    condition: true,
                     text: "Update",
                     press: () {
                       if (_formKey.currentState!.validate()) {

@@ -8,6 +8,7 @@ import 'package:ecommerece_velocity_app/models/products.dart';
 import 'package:ecommerece_velocity_app/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_html/flutter_html.dart';
 
 import '../../../constants.dart';
 import 'product_description.dart';
@@ -30,7 +31,10 @@ class BodyContent extends State<Body> {
 
   increment_quantity() {
     setState(() {
-      quantity++;
+      if(quantity< CorrectProduct.totalQuantity){
+        quantity++;
+      }
+
     });
   }
 
@@ -38,6 +42,8 @@ class BodyContent extends State<Body> {
     setState(() {
       if (quantity > 1) {
         quantity--;
+      }else if(CorrectProduct.totalQuantity ==0){
+        quantity = 0;
       }
     });
   }
@@ -96,6 +102,10 @@ class BodyContent extends State<Body> {
                 ),
               );
             } else if (snapshot.hasData == true) {
+             // initState();
+              if(CorrectProduct.totalQuantity ==0){
+                  quantity = 0;
+              }
               return ListView(
                 children: [
                   ProductImages(product: CorrectProduct),
@@ -142,26 +152,33 @@ class BodyContent extends State<Body> {
                                   ),
                                   child: Row(
                                     children: [
-                                      RoundedIconBtn(
-                                        icon: Icons.remove,
-                                        showShadow: true,
-                                        press: () {
-                                          decrement_quantity();
-                                        },
-                                      ),
+                                      Tooltip(
+                                        message: 'Decrease Quantity',
+                                        child: RoundedIconBtn(
+                                            icon: Icons.remove,
+                                            showShadow: true,
+                                            press: () {
+                                              decrement_quantity();
+                                            },
+                                          ),
+                                        ),
                                       SizedBox(
                                           width:
                                               getProportionateScreenWidth(25)),
                                       Text("$quantity"),
+
                                       SizedBox(
                                           width:
                                               getProportionateScreenWidth(25)),
-                                      RoundedIconBtn(
-                                        icon: Icons.add,
-                                        showShadow: true,
-                                        press: () {
-                                          increment_quantity();
-                                        },
+                                      Tooltip(
+                                        message: 'Increase Quantity',
+                                        child: RoundedIconBtn(
+                                          icon: Icons.add,
+                                          showShadow: true,
+                                          press: () {
+                                            increment_quantity();
+                                          },
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -178,37 +195,72 @@ class BodyContent extends State<Body> {
                         left: getProportionateScreenWidth(15),
                         top: getProportionateScreenWidth(20),
                         right: getProportionateScreenWidth(15)),
-                    child: DefaultButton(
-                      text: "Add To Cart",
-                      press: () {},
+                    child: Tooltip(
+                      message: 'Adds the product to Cart',
+                      child: DefaultButton(
+                          text: "Add To Cart",
+                          press: () {},
+                          condition: CorrectProduct.inStock
+                      ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                      left: getProportionateScreenWidth(15),
-                      top: getProportionateScreenWidth(15),
+                      left: getProportionateScreenWidth(10),
+                      right: getProportionateScreenWidth(10),
+                      bottom: getProportionateScreenWidth(15),
+                      top: getProportionateScreenWidth(20),
                     ),
-                    child: const Text("Product Details",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w800,
-                        )),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: getProportionateScreenWidth(15),
-                      right: getProportionateScreenWidth(20),
-                      top: getProportionateScreenWidth(15),
-                      bottom: getProportionateScreenWidth(20),
-                    ),
-                    child: Text(CorrectProduct.description,
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                        )),
-                  ),
+                    child: SingleChildScrollView(
+                      child: Html(
+                        data: CorrectProduct.description ,
+                        style: {
+                          "table": Style(
+                            width: double.maxFinite
+                            ),
+                          "tr": Style(
+                            border: Border(bottom: BorderSide(color: Colors.grey),
+                                top: BorderSide(color: Colors.grey),
+                                left: BorderSide(color: Colors.grey),
+                                right: BorderSide(color: Colors.grey)
+
+
+                            ),
+                          ),
+                          "th": Style(
+                            padding: EdgeInsets.all(6),
+                            backgroundColor: Colors.grey,
+                          ),
+                          "td": Style(
+                            padding: EdgeInsets.all(6),
+                          ),
+                          'h5': Style(maxLines: 2, textOverflow: TextOverflow.ellipsis),
+                        },
+                        customRender: {
+                          "table": (contextT, child) {
+                            return Container(
+                              width: double.infinity,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child:
+                                (contextT.tree as TableLayoutElement).toWidget(contextT),
+                              )
+                            );
+                          },
+                        },
+                        onCssParseError: (css, messages) {
+                          print("css that errored: $css");
+                          print("error messages:");
+                          messages.forEach((element) {
+                            print(element);
+                          });
+                        },
+                      ),
+                    ),),
                   SizedBox(width: getProportionateScreenWidth(50)),
+
                 ],
+
               );
             } else {
               return Center(
@@ -262,8 +314,11 @@ class BodyContent extends State<Body> {
           var jsonResponse = await json.decode(response.body);
           if (jsonResponse != null) {
             CorrectProduct = OP.productFromJson(response.body).data;
-            CorrectProduct.description =
-                removeAllHtmlTags(CorrectProduct.description);
+           // CorrectProduct.description = removeAllHtmlTags(CorrectProduct.description);
+
+            if(CorrectProduct.totalQuantity ==0){
+              quantity = 0;
+            }
             print(CorrectProduct.description);
             return CorrectProduct;
           } else {

@@ -138,6 +138,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
                   FormError(errors: errors),
                   SizedBox(height: getProportionateScreenHeight(40)),
                   DefaultButton(
+                    condition: true,
                     text: "Update Address",
                     press: () {
                       if (_formKey.currentState!.validate()) {
@@ -155,6 +156,7 @@ class _AddAddressForm extends State<UpdateAddressForm> {
                   ),
                   SizedBox(height: getProportionateScreenHeight(35)),
                   DefaultButton(
+                    condition: true,
                     text: "Delete Address",
                     press: () {
                       if (_formKey.currentState!.validate()) {
