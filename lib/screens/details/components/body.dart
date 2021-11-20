@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:async/async.dart';
 import 'package:ecommerece_velocity_app/components/default_button.dart';
 import 'package:ecommerece_velocity_app/components/rounded_icon_btn.dart';
+import 'package:ecommerece_velocity_app/models/Cart.dart';
 import 'package:ecommerece_velocity_app/models/oneProduct.dart' as OP;
 import 'package:ecommerece_velocity_app/models/products.dart';
+import 'package:ecommerece_velocity_app/screens/cart/cart_screen.dart';
 import 'package:ecommerece_velocity_app/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -199,7 +201,20 @@ class BodyContent extends State<Body> {
                       message: 'Adds the product to Cart',
                       child: DefaultButton(
                           text: "Add To Cart",
-                          press: () {},
+                          press: () {
+                            demoCarts.add(
+                              Cart(product: widget.product, numOfItem: quantity)
+                            );
+
+                            const snackBar = SnackBar(content: Text('Added to Cart'));
+                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        CartScreen()),
+                                    (Route<dynamic> route) => true);
+                          },
                           condition: CorrectProduct.inStock
                       ),
                     ),

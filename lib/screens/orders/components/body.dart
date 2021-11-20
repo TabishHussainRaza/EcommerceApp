@@ -173,6 +173,9 @@ class _OrderBody extends State<OrderBody> {
                                             : snapshot.data[index].status ==
                                                     "pending"
                                                 ? Colors.yellow
+                                            : snapshot.data[index].status ==
+                                            "processing"
+                                            ? Colors.purple
                                                 : Colors.red),
                                     child: Text(
                                       "  " +
@@ -281,6 +284,7 @@ class _OrderBody extends State<OrderBody> {
       } else {
       }
     }catch(e){
+      print(e);
       throw ("Not found");
     }
   }

@@ -6,12 +6,18 @@ import 'components/check_out_card.dart';
 
 class CartScreen extends StatelessWidget {
   static String routeName = "/cart";
+
+  double total = 0;
   @override
   Widget build(BuildContext context) {
+    for( var i = 0 ; i < demoCarts.length; i++) {
+      total = total +  double.parse(demoCarts[i].product.price) * demoCarts[i].numOfItem;
+    }
+
     return Scaffold(
       appBar: buildAppBar(context),
       body: Body(),
-      bottomNavigationBar: CheckoutCard(),
+      bottomNavigationBar: CheckoutCard(total: total,),
     );
   }
 
@@ -22,11 +28,7 @@ class CartScreen extends StatelessWidget {
           Text(
             "Your Cart",
             style: TextStyle(color: Colors.black),
-          ),
-          Text(
-            "${demoCarts.length} items",
-            style: Theme.of(context).textTheme.caption,
-          ),
+          )
         ],
       ),
     );

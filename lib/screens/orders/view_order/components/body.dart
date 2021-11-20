@@ -54,7 +54,15 @@ class BodyContent extends State<Body> {
                           Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(getProportionateScreenWidth(15)),
-                                color:widget.MyOrder.status == "completed" ? Colors.green : widget.MyOrder.status == "pending" ? Colors.yellow :Colors.red
+                                color:widget.MyOrder.status == "completed" ?
+                                Colors.green : widget.MyOrder.status == "pending" ?
+
+
+                                Colors.yellow
+                                    : widget.MyOrder.status ==
+                                    "processing"
+                                    ? Colors.purple
+                                    :Colors.red
                                 ),
                             child:
                             Text("  "+ widget.MyOrder.status.toString().toUpperCase() + "  ",

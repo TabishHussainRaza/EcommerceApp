@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 
-import 'Product.dart';
-import 'Product.dart';
+import 'package:ecommerece_velocity_app/models/products.dart';
 
 class Cart {
   final Product product;
@@ -12,6 +10,4 @@ class Cart {
 
 // Demo data for our cart
 
-List<Cart> demoCarts = [
-  Cart(product: demoProducts[0], numOfItem: 1),
-];
+List<Cart> demoCarts = [];

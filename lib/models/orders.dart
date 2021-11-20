@@ -2,7 +2,9 @@
 //
 //     final ordersList = ordersListFromJson(jsonString);
 
-import 'package:meta/meta.dart';
+import 'package:ecommerece_velocity_app/models/Customer.dart' as CustomerData;
+import 'package:ecommerece_velocity_app/models/address.dart';
+import 'package:ecommerece_velocity_app/models/products.dart';
 import 'dart:convert';
 
 OrdersList ordersListFromJson(String str) => OrdersList.fromJson(json.decode(str));
@@ -204,7 +206,7 @@ class Order {
   String formatedShippingRefunded;
   String baseShippingRefunded;
   String formatedBaseShippingRefunded;
-  Customer customer;
+  CustomerData.Data customer;
   Channel channel;
   Address shippingAddress;
   Address billingAddress;
@@ -294,7 +296,7 @@ class Order {
     formatedShippingRefunded: json["formated_shipping_refunded"],
     baseShippingRefunded: json["base_shipping_refunded"],
     formatedBaseShippingRefunded: json["formated_base_shipping_refunded"],
-    customer: Customer.fromJson(json["customer"]),
+    customer: CustomerData.Data.fromJson(json["customer"]),
     channel: Channel.fromJson(json["channel"]),
     shippingAddress: Address.fromJson(json["shipping_address"]),
     billingAddress: Address.fromJson(json["billing_address"]),
@@ -394,70 +396,6 @@ class Order {
     "shipments": List<dynamic>.from(shipments.map((x) => x.toJson())),
     "updated_at": updatedAt.toIso8601String(),
     "created_at": createdAt.toIso8601String(),
-  };
-}
-
-class Address {
-  Address({
-    required this.id,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.address1,
-    required this.country,
-    required this.countryName,
-    required this.state,
-    required this.city,
-    required this.postcode,
-    required this.phone,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  int id;
-  String email;
-  String firstName;
-  String lastName;
-  List<String> address1;
-  String country;
-  String countryName;
-  String state;
-  String city;
-  String postcode;
-  String phone;
-  DateTime createdAt;
-  DateTime updatedAt;
-
-  factory Address.fromJson(Map<String, dynamic> json) => Address(
-    id: json["id"],
-    email: json["email"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    address1: List<String>.from(json["address1"].map((x) => x)),
-    country: json["country"],
-    countryName: json["country_name"],
-    state: json["state"],
-    city: json["city"],
-    postcode: json["postcode"],
-    phone: json["phone"],
-    createdAt: DateTime.parse(json["created_at"]),
-    updatedAt: DateTime.parse(json["updated_at"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "email": email,
-    "first_name": firstName,
-    "last_name": lastName,
-    "address1": List<dynamic>.from(address1.map((x) => x)),
-    "country": country,
-    "country_name": countryName,
-    "state": state,
-    "city": city,
-    "postcode": postcode,
-    "phone": phone,
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
   };
 }
 
@@ -649,66 +587,6 @@ class RootCategory {
   };
 }
 
-class Customer {
-  Customer({
-    required this.id,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.name,
-    required this.gender,
-    required this.dateOfBirth,
-    required this.phone,
-    required this.status,
-    required this.group,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  int id;
-  String email;
-  String firstName;
-  String lastName;
-  String name;
-  String gender;
-  String? dateOfBirth;
-  String phone;
-  int status;
-  DefaultLocale group;
-  String? createdAt;
-  String? updatedAt;
-
-  factory Customer.fromJson(Map<String, dynamic> json) => Customer(
-    id: json["id"],
-    email: json["email"],
-    firstName: json["first_name"],
-    lastName: json["last_name"],
-    name: json["name"],
-    gender: json["gender"],
-    dateOfBirth: json["date_of_birth"],
-    phone: json["phone"],
-    status: json["status"],
-    group: DefaultLocale.fromJson(json["group"]),
-    createdAt: json["created_at"],
-    updatedAt: json["updated_at"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "email": email,
-    "first_name": firstName,
-    "last_name": lastName,
-    "name": name,
-    "gender": gender,
-    "date_of_birth": "dateOfBirth",
-    "phone": phone,
-    "status": status,
-    "group": group.toJson(),
-    "created_at": createdAt,
-    "updated_at": updatedAt,
-  };
-}
-
 class Invoice {
   Invoice({
     required this.id,
@@ -890,9 +768,9 @@ class InvoiceItem {
   String formatedTaxAmount;
   String baseTaxAmount;
   String formatedBaseTaxAmount;
-  int grandTotal;
+  double grandTotal;
   String formatedGrandTotal;
-  int baseGrandTotal;
+  double baseGrandTotal;
   String formatedBaseGrandTotal;
   Additional additional;
   dynamic child;
@@ -1245,194 +1123,6 @@ class DatumItem {
   };
 }
 
-class Product {
-  Product({
-    required this.id,
-    required this.sku,
-    required this.type,
-    required this.name,
-    required this.urlKey,
-    required this.price,
-    required this.formatedPrice,
-    required this.shortDescription,
-    required this.description,
-    required this.images,
-    required this.videos,
-    required this.baseImage,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.reviews,
-    required this.inStock,
-    required this.isSaved,
-    required this.isWishlisted,
-    required this.isItemInCart,
-    required this.showQuantityChanger,
-  });
-
-  int id;
-  String sku;
-  String type;
-  String name;
-  String urlKey;
-  String price;
-  String formatedPrice;
-  String shortDescription;
-  String description;
-  List<Image> images;
-  List<dynamic> videos;
-  BaseImage baseImage;
-  DateTime createdAt;
-  DateTime updatedAt;
-  Reviews reviews;
-  bool inStock;
-  bool isSaved;
-  bool isWishlisted;
-  bool isItemInCart;
-  bool showQuantityChanger;
-
-  factory Product.fromJson(Map<String, dynamic> json) => Product(
-    id: json["id"],
-    sku: json["sku"],
-    type: json["type"],
-    name: json["name"],
-    urlKey: json["url_key"],
-    price: json["price"],
-    formatedPrice: json["formated_price"],
-    shortDescription: json["short_description"],
-    description: json["description"],
-    images: List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
-    videos: List<dynamic>.from(json["videos"].map((x) => x)),
-    baseImage: BaseImage.fromJson(json["base_image"]),
-    createdAt: DateTime.parse(json["created_at"]),
-    updatedAt: DateTime.parse(json["updated_at"]),
-    reviews: Reviews.fromJson(json["reviews"]),
-    inStock: json["in_stock"],
-    isSaved: json["is_saved"],
-    isWishlisted: json["is_wishlisted"],
-    isItemInCart: json["is_item_in_cart"],
-    showQuantityChanger: json["show_quantity_changer"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "sku": sku,
-    "type": type,
-    "name": name,
-    "url_key": urlKey,
-    "price": price,
-    "formated_price": formatedPrice,
-    "short_description": shortDescription,
-    "description": description,
-    "images": List<dynamic>.from(images.map((x) => x.toJson())),
-    "videos": List<dynamic>.from(videos.map((x) => x)),
-    "base_image": baseImage.toJson(),
-    "created_at": createdAt.toIso8601String(),
-    "updated_at": updatedAt.toIso8601String(),
-    "reviews": reviews.toJson(),
-    "in_stock": inStock,
-    "is_saved": isSaved,
-    "is_wishlisted": isWishlisted,
-    "is_item_in_cart": isItemInCart,
-    "show_quantity_changer": showQuantityChanger,
-  };
-}
-
-class BaseImage {
-  BaseImage({
-    required this.smallImageUrl,
-    required this.mediumImageUrl,
-    required this.largeImageUrl,
-    required this.originalImageUrl,
-  });
-
-  String smallImageUrl;
-  String mediumImageUrl;
-  String largeImageUrl;
-  String originalImageUrl;
-
-  factory BaseImage.fromJson(Map<String, dynamic> json) => BaseImage(
-    smallImageUrl: json["small_image_url"],
-    mediumImageUrl: json["medium_image_url"],
-    largeImageUrl: json["large_image_url"],
-    originalImageUrl: json["original_image_url"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "small_image_url": smallImageUrl,
-    "medium_image_url": mediumImageUrl,
-    "large_image_url": largeImageUrl,
-    "original_image_url": originalImageUrl,
-  };
-}
-
-class Image {
-  Image({
-    required this.id,
-    required this.path,
-    required this.url,
-    required this.originalImageUrl,
-    required this.smallImageUrl,
-    required this.mediumImageUrl,
-    required this.largeImageUrl,
-  });
-
-  int id;
-  String path;
-  String url;
-  String originalImageUrl;
-  String smallImageUrl;
-  String mediumImageUrl;
-  String largeImageUrl;
-
-  factory Image.fromJson(Map<String, dynamic> json) => Image(
-    id: json["id"],
-    path: json["path"],
-    url: json["url"],
-    originalImageUrl: json["original_image_url"],
-    smallImageUrl: json["small_image_url"],
-    mediumImageUrl: json["medium_image_url"],
-    largeImageUrl: json["large_image_url"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "path": path,
-    "url": url,
-    "original_image_url": originalImageUrl,
-    "small_image_url": smallImageUrl,
-    "medium_image_url": mediumImageUrl,
-    "large_image_url": largeImageUrl,
-  };
-}
-
-class Reviews {
-  Reviews({
-    required this.total,
-    required this.totalRating,
-    required this.averageRating,
-    required this.percentage,
-  });
-
-  int total;
-  int totalRating;
-  int averageRating;
-  List<dynamic> percentage;
-
-  factory Reviews.fromJson(Map<String, dynamic> json) => Reviews(
-    total: json["total"],
-    totalRating: json["total_rating"],
-    averageRating: json["average_rating"],
-    percentage: List<dynamic>.from(json["percentage"].map((x) => x)),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "total": total,
-    "total_rating": totalRating,
-    "average_rating": averageRating,
-    "percentage": List<dynamic>.from(percentage.map((x) => x)),
-  };
-}
-
 class Shipment {
   Shipment({
     required this.id,
@@ -1456,7 +1146,7 @@ class Shipment {
   String carrierTitle;
   String trackNumber;
   int emailSent;
-  Customer customer;
+  CustomerData.Data customer;
   InventorySource inventorySource;
   List<ShipmentItem> items;
 
@@ -1469,7 +1159,7 @@ class Shipment {
     carrierTitle: json["carrier_title"],
     trackNumber: json["track_number"],
     emailSent: json["email_sent"],
-    customer: Customer.fromJson(json["customer"]),
+    customer: CustomerData.Data.fromJson(json["customer"]),
     inventorySource: InventorySource.fromJson(json["inventory_source"]),
     items: List<ShipmentItem>.from(json["items"].map((x) => ShipmentItem.fromJson(x))),
   );

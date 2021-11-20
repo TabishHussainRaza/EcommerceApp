@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerece_velocity_app/models/Cart.dart';
 
@@ -26,7 +27,23 @@ class CartCard extends StatelessWidget {
                 color: Color(0xFFF5F6F9),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Image.asset(cart.product.images[0]),
+              child: CachedNetworkImage(
+                imageUrl: cart.product.images[0].largeImageUrl,
+                progressIndicatorBuilder:
+                    (context, url, downloadProgress) => Center(
+                    child: SizedBox(
+                      width: 25,
+                      height: 25,
+                      child: new CircularProgressIndicator(
+                        value: downloadProgress.progress,
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                            kPrimaryColor),
+                        semanticsLabel: 'Progress indicator',
+                      ),
+                    )),
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.error),
+              ),
             ),
           ),
         ),
@@ -35,9 +52,10 @@ class CartCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              cart.product.title,
-              style: TextStyle(color: Colors.black, fontSize: 16),
-              maxLines: 2,
+              cart.product.name,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Colors.black, fontSize: 13),
+              maxLines: 1,
             ),
             SizedBox(height: 10),
             Text.rich(
