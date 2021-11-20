@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 
 import '../../constants.dart';
 import '../../enums.dart';
+import '../../size_config.dart';
 
 Future<All_categories> fetchAlbum() async {
   String url = serverUrl + "categories";
@@ -82,7 +83,7 @@ class Datum {
   final String name;
   final String slug;
   final String displayMode;
-  final String description;
+  String description;
   final String metaTitle;
   final String metaDescription;
   final String metaKeywords;
@@ -253,6 +254,7 @@ class _CategorySectionState extends State<CategorySection> {
               return ListView.builder(
                   itemCount: snapshot.data!.dataCategory.length,
                   itemBuilder: (_, index) {
+                    snapshot.data!.dataCategory[index].description = removeAllHtmlTags(snapshot.data!.dataCategory[index].description);
                     return InkWell(
                         child: Container(
                           height: 150.0,
@@ -262,8 +264,8 @@ class _CategorySectionState extends State<CategorySection> {
                                   BorderRadius.all(Radius.circular(10.0)),
                               gradient: LinearGradient(
                                   colors: [
-                                    Colors.lightBlueAccent,
-                                    Colors.orangeAccent
+                                    Color(0xFFF8B067),
+                                    Color(0xFF00821E)
                                   ],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
@@ -271,15 +273,10 @@ class _CategorySectionState extends State<CategorySection> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 10.0),
-                                  child: CircleAvatar(
-                                    radius: 35.0,
-                                    backgroundImage: NetworkImage(
-                                        'https://loremflickr.com/320/240/music?lock=$index'),
-                                    // '${snapshot.data!.dataCategory[index].imageUrl}'),
-                                  )),
+                          Padding(
+                          padding: EdgeInsets.only(
+                              left: getProportionateScreenWidth(25),
+                          ),),
                               Expanded(
                                   child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -405,5 +402,10 @@ class _CategorySectionState extends State<CategorySection> {
         ],
       ),
     );
+  }
+
+  String removeAllHtmlTags(String htmlText) {
+    RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+    return htmlText.replaceAll(exp, '');
   }
 }

@@ -60,12 +60,12 @@ class _DetailPageState extends State<DetailPage> {
                                 BorderRadius.all(Radius.circular(10.0)),
                                 gradient: LinearGradient(
                                     colors: [
-                                      Colors.lightBlueAccent,
-                                      Colors.orangeAccent
+                                      Color(0xFFF8B067),
+                                      Color(0xFF00821E)
                                     ],
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
-                                    tileMode: TileMode.clamp)),
+                                    tileMode: TileMode.repeated)),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
@@ -104,7 +104,7 @@ class _DetailPageState extends State<DetailPage> {
                                           snapshot.data!.data[index].name,
                                           style: TextStyle(
                                               fontSize: 20.0,
-                                              color: Colors.black,
+                                              color: Colors.white,
                                               fontWeight: FontWeight.bold),
                                         ),
                                         SizedBox(
